@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WeeklyItemView">
+        <attr name="date" format="reference|string"/>
+        <attr name="day_sky_image" format="reference|integer" />
+        <attr name="night_sky_image" format="reference|integer" />
+        <attr name="low_temp" format="reference|string|integer"/>
+        <attr name="high_temp" format="reference|string|integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="WeeklyItemLayout">
+        <attr name="item1_visibility" format="integer"/>
+        <attr name="item2_visibility" format="integer"/>
+        <attr name="item3_visibility" format="integer"/>
+        <attr name="item4_visibility" format="integer"/>
+        <attr name="item5_visibility" format="integer"/>
+        <attr name="item6_visibility" format="integer"/>
+        <attr name="item7_visibility" format="integer"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,7 @@
+캡처/
+기상청20_중기예보_조회서비스_오픈API활용가이드/
+기상청18_동네예보_조회서비스_오픈API활용가이드/
+/nginx-deployment.yaml
+/app/android/app/release
+/app/*.jks
+/app/android/app/src/main/res/values/strings-custom.xml

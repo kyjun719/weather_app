@@ -1,0 +1,61 @@
+3년 7개월 결산
+1. 도커, 쿠버네티스
+2. 안드로이드
+3. rest api?
+4. nginx???
+5. ocf -> ???
+6. aws
+
+
+aws -> 아키텍트 자격증 알아볼것
+
+도커+쿠버네티스+rest api+안드로이드 프로젝트
+- 날씨앱 재사용 프로젝트
+0. 동네예보 api 정보
+https://www.data.go.kr/dataset/15000099/openapi.do
+
+1. rest api 서버 구현, 요청시 기상정 open api로 호출
+2. api 서버 <-> mq <-> open api 요청 서버 <-> 레디스 또는 Mysql 로 구현
+3. 구성도는 n : 1 : n : n 이 되어야 할듯, mq도 n으로 해야하는지는 고려
+4. 도커로 jar 커스텀 이미지 생성
+6. 파드간 통신 가능해야함
+7. 앱은 api서버만 연결함
+8. 앱 수정
+엑셀의 좌표값 찾아서 몇개인지 확인해야함
+99. 프론트는 나중에 고려, 
+
+
+3/11
+virtual box 설치
+
+3/12
+ubuntu 설치, kubeadm의 경우 마스터, 노드 두개의 vm이 필요함
+
+3/15
+kubeadm 설치 완료
+TODO
+1. nginx 파드로 올려서 curl 테스트
+2. 요청서버, mq, api 요청서버, mysql 구현
+2.1. 요청서버 구현
+2.2. api 요청서버 구현
+2.3. rabbitMQ 통신 확인
+2.4. mysql 테이블 설계 및 통신
+3. ubuntu에서 테스트
+4. pod 생성후 테스트
+5. 앱 테스트
+
+3/22
+ngnix 테스트 완료
+springboot에서 open api로 요청 테스트중
+
+6/21
+TODO
+1. 앱으로 직접 통신
+2. 서버 구축
+3. 서버 구조화
+
+TODO 앱 구조
+1. MVVM 패턴
+- ViewModel, Data binding, Retrofit2
+- Data binding 과 REST 연결 검토
+2. cvs -> 좌표 또는 코드 -> 검색

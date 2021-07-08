@@ -6,7 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.entity.KakaoRegionCodeRes;
+import com.jun.weather.repository.web.api.KakaoRegionCodeRes;
+import com.jun.weather.repository.web.api.RegionItem;
 import com.jun.weather.repository.web.entity.Enum;
 import com.jun.weather.repository.web.entity.RestResponse;
 import com.jun.weather.viewmodel.entity.FailRestResponse;
@@ -30,19 +31,19 @@ public class NowLocationViewModel extends CustomViewModel<NowLocationModel> {
         } else {
             KakaoRegionCodeRes kakaoRegionCodeRes = data1.singleBody;
             NowLocationModel locationModel = new NowLocationModel();
-            for(KakaoRegionCodeRes.RegionItem item : kakaoRegionCodeRes.documents) {
+            for(RegionItem item : kakaoRegionCodeRes.getDocuments()) {
                 NowLocationModel.NowLocation nowLocation = new NowLocationModel.NowLocation();
-                nowLocation.x = item.x;
-                nowLocation.y = item.y;
-                nowLocation.code = item.code;
-                nowLocation.deg1 = item.region_1depth_name.replace("특별자치", "");
-                nowLocation.deg2 = item.region_2depth_name;
-                if(nowLocation.deg1.equals("세종특별자치시")  && item.region_2depth_name.isEmpty()) {
+                nowLocation.x = item.getX();
+                nowLocation.y = item.getY();
+                nowLocation.code = item.getCode();
+                nowLocation.deg1 = item.getRegion_1depth_name().replace("특별자치", "");
+                nowLocation.deg2 = item.getRegion_2depth_name();
+                if(nowLocation.deg1.equals("세종특별자치시")  && item.getRegion_2depth_name().isEmpty()) {
                     nowLocation.deg2 = "세종특별자치시";
                 }
-                nowLocation.deg3 = item.region_3depth_name;
+                nowLocation.deg3 = item.getRegion_3depth_name();
 
-                nowLocation.address = item.address_name.replace("특별자치", "");
+                nowLocation.address = item.getAddress_name().replace("특별자치", "");
                 locationModel.addressList.add(nowLocation);
             }
 

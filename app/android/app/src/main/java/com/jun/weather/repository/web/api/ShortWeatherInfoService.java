@@ -1,11 +1,5 @@
 package com.jun.weather.repository.web.api;
 
-import com.jun.weather.repository.web.api.entity.ApiResponse;
-import com.jun.weather.repository.web.api.entity.ForecastItem;
-import com.jun.weather.repository.web.api.entity.MidLandItem;
-import com.jun.weather.repository.web.api.entity.MidTempItem;
-import com.jun.weather.repository.web.api.entity.ObserveItem;
-
 import java.util.Map;
 
 import retrofit2.Call;

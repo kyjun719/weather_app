@@ -1,12 +1,13 @@
 package com.jun.weather.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.db.entity.ShortWeatherPoint;
+import com.jun.weather.repository.db.FileRepository;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.viewmodel.entity.WeatherPointModel;
 
@@ -16,24 +17,24 @@ public class WeatherPointViewModel extends CustomViewModel<WeatherPointModel> {
     public WeatherPointViewModel(@NonNull Application application, AppRepository repository) {
         super(application, repository);
 
-        LiveData<List<ShortWeatherPoint>> shortWeatherPointList = repository.getShortWeatherPointList();
+        LiveData<List<FileRepository.ShortWeatherPoint>> shortWeatherPointList = repository.getShortWeatherPointList();
         shortWeatherPointList.observeForever((value) -> {
             WeatherPointModel weatherPointModel = new WeatherPointModel();
             String befKey = "";
             int startIdx = -1, endIdx = -1;
             for(int i = 0; i < value.size(); i++) {
-                ShortWeatherPoint point = value.get(i);
+                FileRepository.ShortWeatherPoint point = value.get(i);
                 WeatherPointModel.WeatherPoint model = new WeatherPointModel.WeatherPoint();
-                model.deg_1 = point.deg_1;
-                model.deg_2 = point.deg_2;
-                model.deg_3 = point.deg_3;
-                model.midTempCode = point.mid_temp_code;
-                model.midWeatherCode = point.mid_weather_code;
-                model.x = point.x;
-                model.y = point.y;
+                model.deg_1 = point.getDeg1();
+                model.deg_2 = point.getDeg2();
+                model.deg_3 = point.getDeg3();
+                model.midTempCode = point.getMidTempCode();
+                model.midWeatherCode = point.getMidWeatherCode();
+                model.x = point.getX();
+                model.y = point.getY();
                 weatherPointModel.weatherPointList.add(model);
 
-                if(befKey.equals(point.deg_1+" "+point.deg_2)) {
+                if(befKey.equals(point.getDeg1()+" "+point.getDeg2())) {
                     endIdx++;
                 } else {
                     if(!befKey.isEmpty()) {
@@ -41,7 +42,7 @@ public class WeatherPointViewModel extends CustomViewModel<WeatherPointModel> {
                     }
                     startIdx = i;
                     endIdx = i;
-                    befKey = point.deg_1+" "+point.deg_2;
+                    befKey = point.getDeg1()+" "+point.getDeg2();
                 }
             }
 
@@ -52,7 +53,7 @@ public class WeatherPointViewModel extends CustomViewModel<WeatherPointModel> {
         });
     }
 
-    public void updatePointData() {
-        appExecutor.runInRepositoryIO(() -> repository.loadShortWeatherPointList());
+    public void updatePointData(Context context) {
+        appExecutor.runInRepositoryIO(() -> repository.loadShortWeatherPointList(context));
     }
 }

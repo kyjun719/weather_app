@@ -93,7 +93,7 @@ public class GeoLocationHelper {
             }
         });
         weatherPointViewModel.getUpdateFailData().observe(lifecycleOwner, failRestResponse -> geoLocationResultListener.onFail(failRestResponse));
-        weatherPointViewModel.updatePointData();
+        weatherPointViewModel.updatePointData(context);
     }
 
     private void parseData(NowLocationModel nowLocationModel, WeatherPointModel weatherPointModel) {

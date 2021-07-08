@@ -282,6 +282,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         CommonUtils.notifyPermissionRequestResult(mContext, requestCode, grantResults);
     }
 
@@ -327,7 +328,7 @@ public class MainActivity extends FragmentActivity {
             adapter.addAll(weatherPointModels.weatherPointList);
             adapter.notifyDataSetChanged();
         });
-        weatherPointViewModel.updatePointData();
+        weatherPointViewModel.updatePointData(this);
     }
 
     private void updateGPSButtonIcon(boolean b) {

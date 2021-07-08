@@ -20,7 +20,7 @@ public class AppExecutor {
     }
 
     public AppExecutor() {
-        this(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(3),new MainThreadExecutor());
+        this(Executors.newFixedThreadPool(3), Executors.newSingleThreadExecutor(),new MainThreadExecutor());
     }
 
     public void runInRepositoryIO(Runnable runnable) {

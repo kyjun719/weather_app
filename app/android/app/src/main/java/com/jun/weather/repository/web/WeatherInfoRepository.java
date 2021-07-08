@@ -4,13 +4,13 @@ import android.content.Context;
 
 import com.jun.weather.R;
 import com.jun.weather.repository.web.api.APIClient;
+import com.jun.weather.repository.web.api.ApiResponse;
+import com.jun.weather.repository.web.api.ForecastItem;
+import com.jun.weather.repository.web.api.MidLandItem;
+import com.jun.weather.repository.web.api.MidTempItem;
 import com.jun.weather.repository.web.api.MidWeatherInfoService;
+import com.jun.weather.repository.web.api.ObserveItem;
 import com.jun.weather.repository.web.api.ShortWeatherInfoService;
-import com.jun.weather.repository.web.api.entity.ApiResponse;
-import com.jun.weather.repository.web.api.entity.ForecastItem;
-import com.jun.weather.repository.web.api.entity.MidLandItem;
-import com.jun.weather.repository.web.api.entity.MidTempItem;
-import com.jun.weather.repository.web.api.entity.ObserveItem;
 import com.jun.weather.repository.web.entity.WeatherInfoCacheKey;
 import com.jun.weather.repository.web.entity.Enum;
 import com.jun.weather.repository.web.entity.RestResponse;
@@ -57,9 +57,9 @@ public class WeatherInfoRepository {
             return false;
         }
 
-        if(!body.response.header.resultCode.equals("00")) {
+        if(!body.getResponse().getHeader().getResultCode().equals("00")) {
             restResponse.code = Enum.ResponseCode.BAD_REQUEST.getValue();
-            restResponse.failMsg = body.response.header.resultMsg;
+            restResponse.failMsg = body.getResponse().getHeader().getResultMsg();
             return false;
         }
 
@@ -132,7 +132,7 @@ public class WeatherInfoRepository {
                     throw new Exception();
                 }
                 restResponse.code = response.code();
-                restResponse.listBody = body.response.body.items.item;
+                restResponse.listBody = body.getResponse().getBody().getItems().getItem();
                 addToCacheMap(Enum.KEY.NOW.ordinal(), baseDate, baseTime, nx, ny, restResponse);
             }
         } catch (Exception e) {
@@ -174,7 +174,7 @@ public class WeatherInfoRepository {
                     throw new Exception();
                 }
                 restResponse.code = response.code();
-                restResponse.listBody = body.response.body.items.item;
+                restResponse.listBody = body.getResponse().getBody().getItems().getItem();
 
                 addToCacheMap(val, baseDate, baseTime, nx, ny, restResponse);
             }
@@ -217,7 +217,7 @@ public class WeatherInfoRepository {
                     throw new Exception();
                 }
                 restResponse.code = response.code();
-                restResponse.listBody = body.response.body.items.item;
+                restResponse.listBody = body.getResponse().getBody().getItems().getItem();
 
                 addToCacheMap(Enum.KEY.SHORT_FORECAST.ordinal(), baseDate, baseTime, nx, ny, restResponse);
             }
@@ -259,7 +259,7 @@ public class WeatherInfoRepository {
                     throw new Exception();
                 }
                 restResponse.code = response.code();
-                restResponse.listBody = body.response.body.items.item;
+                restResponse.listBody = body.getResponse().getBody().getItems().getItem();
 
                 addToCacheMap(Enum.KEY.ULTRA_SHORT_FORECAST.ordinal(), baseDate, baseTime, nx, ny, restResponse);
             }
@@ -299,7 +299,7 @@ public class WeatherInfoRepository {
                     throw new Exception();
                 }
                 restResponse.code = response.code();
-                restResponse.listBody = body.response.body.items.item;
+                restResponse.listBody = body.getResponse().getBody().getItems().getItem();
 
                 addToCacheMap(Enum.KEY.MID_LAND.ordinal(), date, regionId, restResponse);
             }
@@ -339,7 +339,7 @@ public class WeatherInfoRepository {
                     throw new Exception();
                 }
                 restResponse.code = response.code();
-                restResponse.listBody = body.response.body.items.item;
+                restResponse.listBody = body.getResponse().getBody().getItems().getItem();
 
                 addToCacheMap(Enum.KEY.MID_TEMP.ordinal(), date, regionId, restResponse);
             }

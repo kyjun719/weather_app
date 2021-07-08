@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.entity.MidLandItem;
-import com.jun.weather.repository.web.api.entity.MidTempItem;
+import com.jun.weather.repository.web.api.MidLandItem;
+import com.jun.weather.repository.web.api.MidTempItem;
 import com.jun.weather.repository.web.entity.Enum;
 import com.jun.weather.repository.web.entity.RestResponse;
 import com.jun.weather.util.CLogger;

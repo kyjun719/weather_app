@@ -8,14 +8,13 @@ import androidx.lifecycle.MutableLiveData;
 import com.jun.weather.AppExecutor;
 import com.jun.weather.repository.db.FileRepository;
 import com.jun.weather.repository.db.RoomRepository;
-import com.jun.weather.repository.db.entity.ShortWeatherPoint;
 import com.jun.weather.repository.web.KakaoLocationRepository;
 import com.jun.weather.repository.web.WeatherInfoRepository;
-import com.jun.weather.repository.web.api.entity.ForecastItem;
-import com.jun.weather.repository.web.api.entity.KakaoRegionCodeRes;
-import com.jun.weather.repository.web.api.entity.MidLandItem;
-import com.jun.weather.repository.web.api.entity.MidTempItem;
-import com.jun.weather.repository.web.api.entity.ObserveItem;
+import com.jun.weather.repository.web.api.ForecastItem;
+import com.jun.weather.repository.web.api.KakaoRegionCodeRes;
+import com.jun.weather.repository.web.api.MidLandItem;
+import com.jun.weather.repository.web.api.MidTempItem;
+import com.jun.weather.repository.web.api.ObserveItem;
 import com.jun.weather.repository.web.entity.RestResponse;
 
 import java.util.List;
@@ -38,12 +37,12 @@ public class AppRepository {
     private AppRepository(Context context, AppExecutor executor) {
         appExecutor = executor;
         weatherInfoRepository = WeatherInfoRepository.getInstance(context);
-        fileRepository = FileRepository.getInstance();
+        fileRepository = new FileRepository();
         kakaoLocationRepository = KakaoLocationRepository.getInstance(context);
     }
 
     public void init(Context context) {
-        fileRepository.init(context);
+
     }
 
     private MutableLiveData<RestResponse<ObserveItem>> nowWeatherData;
@@ -106,11 +105,11 @@ public class AppRepository {
         return midTempData;
     }
 
-    private MutableLiveData<List<ShortWeatherPoint>> shortWeatherPointList;
-    public void loadShortWeatherPointList() {
-        appExecutor.runInRepositoryIO(() -> shortWeatherPointList.postValue(fileRepository.getShortWeatherPoint()));
+    private MutableLiveData<List<FileRepository.ShortWeatherPoint>> shortWeatherPointList;
+    public void loadShortWeatherPointList(Context context) {
+        appExecutor.runInRepositoryIO(() -> shortWeatherPointList.postValue(fileRepository.getShortWeatherPoint(context.getResources())));
     }
-    public LiveData<List<ShortWeatherPoint>> getShortWeatherPointList() {
+    public LiveData<List<FileRepository.ShortWeatherPoint>> getShortWeatherPointList() {
         if(shortWeatherPointList == null) {
             shortWeatherPointList = new MutableLiveData<>();
         }

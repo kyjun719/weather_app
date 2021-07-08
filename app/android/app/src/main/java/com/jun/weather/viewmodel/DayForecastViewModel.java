@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.entity.ForecastItem;
+import com.jun.weather.repository.web.api.ForecastItem;
 import com.jun.weather.repository.web.entity.RestResponse;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.util.CommonUtils;
@@ -59,7 +59,7 @@ public class DayForecastViewModel extends CustomViewModel<List<DayForecastModel>
             List<ForecastItem> itemList = new ArrayList<>(shortForecastData.listBody);
             itemList.addAll(ultraShortForecastData.listBody);
             for(ForecastItem item : itemList) {
-                double date = Double.parseDouble(item.fcstDate+item.fcstTime);
+                double date = Double.parseDouble(item.getFcstDate()+item.getFcstTime());
                 if(map.get(date) == null) {
                     map.put(date, new DayForecastModel());
                 }
@@ -118,48 +118,48 @@ public class DayForecastViewModel extends CustomViewModel<List<DayForecastModel>
         WSD	풍속	1	10
          */
         //Log.d(TAG, item.category+">>"+item.fcstValue);
-        dayForecastModel.forecastDate = item.fcstDate;
-        dayForecastModel.forecastTime = item.fcstTime;
-        switch (item.category) {
+        dayForecastModel.forecastDate = item.getFcstDate();
+        dayForecastModel.forecastTime = item.getFcstTime();
+        switch (item.getCategory()) {
             case "POP":
-                dayForecastModel.forecastRainPercentage = item.fcstValue;
+                dayForecastModel.forecastRainPercentage = item.getFcstValue();
                 break;
             case "PTY":
-                dayForecastModel.forecastRainState = Enum.PTY.getStringValByVal(Integer.parseInt(item.fcstValue));
+                dayForecastModel.forecastRainState = Enum.PTY.getStringValByVal(Integer.parseInt(item.getFcstValue()));
                 break;
             case "R06":
-                dayForecastModel.forecastRain = getForecastRainString(Double.parseDouble(item.fcstValue));
+                dayForecastModel.forecastRain = getForecastRainString(Double.parseDouble(item.getFcstValue()));
                 break;
             case "RN1":
-                dayForecastModel.forecastRain = item.fcstValue;
+                dayForecastModel.forecastRain = item.getFcstValue();
                 break;
             case "REH":
-                dayForecastModel.forecastHumidity = item.fcstValue;
+                dayForecastModel.forecastHumidity = item.getFcstValue();
                 break;
             case "S06":
-                dayForecastModel.forecastSnow = getForecastSnowString(Double.parseDouble(item.fcstValue));
+                dayForecastModel.forecastSnow = getForecastSnowString(Double.parseDouble(item.getFcstValue()));
                 break;
             case "SKY":
-                dayForecastModel.forecastSky = Enum.SKY.getStringValByVal(Integer.parseInt(item.fcstValue));
+                dayForecastModel.forecastSky = Enum.SKY.getStringValByVal(Integer.parseInt(item.getFcstValue()));
                 break;
             case "T3H":
             case "T1H":
-                dayForecastModel.forecastTemp = item.fcstValue;
+                dayForecastModel.forecastTemp = item.getFcstValue();
                 break;
             case "TMN":
-                dayForecastModel.forecastLowTemp = item.fcstValue;
+                dayForecastModel.forecastLowTemp = item.getFcstValue();
                 break;
             case "TMX":
-                dayForecastModel.forecastHighTemp = item.fcstValue;
+                dayForecastModel.forecastHighTemp = item.getFcstValue();
                 break;
             case "WAV":
-                dayForecastModel.forecastWave = item.fcstValue;
+                dayForecastModel.forecastWave = item.getFcstValue();
                 break;
             case "VEC":
-                dayForecastModel.forecastWindDir = Enum.WIND_DIR.getStringValByVal(Integer.parseInt(item.fcstValue));
+                dayForecastModel.forecastWindDir = Enum.WIND_DIR.getStringValByVal(Integer.parseInt(item.getFcstValue()));
                 break;
             case "WSD":
-                dayForecastModel.forecastWind = item.fcstValue;
+                dayForecastModel.forecastWind = item.getFcstValue();
                 break;
         }
     }

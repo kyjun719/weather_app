@@ -1,7 +1,5 @@
 package com.jun.weather.repository.web.api;
 
-import com.jun.weather.repository.web.api.entity.KakaoRegionCodeRes;
-
 import java.util.Map;
 
 import retrofit2.Call;

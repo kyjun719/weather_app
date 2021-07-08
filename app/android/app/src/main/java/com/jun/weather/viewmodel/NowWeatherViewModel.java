@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.entity.ForecastItem;
-import com.jun.weather.repository.web.api.entity.ObserveItem;
+import com.jun.weather.repository.web.api.ForecastItem;
+import com.jun.weather.repository.web.api.ObserveItem;
 import com.jun.weather.repository.web.entity.RestResponse;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.util.CommonUtils;
@@ -68,8 +68,8 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
             appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
         } else {
             NowWeatherModel nowWeatherModel = new NowWeatherModel();
-            nowWeatherModel.baseDate = nowWeatherData.listBody.get(0).baseDate;
-            nowWeatherModel.baseTime = nowWeatherData.listBody.get(0).baseTime;
+            nowWeatherModel.baseDate = nowWeatherData.listBody.get(0).getBaseDate();
+            nowWeatherModel.baseTime = nowWeatherData.listBody.get(0).getBaseTime();
             nowWeatherModel.nowBaseTime = "기준시간: "+nowWeatherModel.baseDate+" "+nowWeatherModel.baseTime;
 
             /*
@@ -83,39 +83,39 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
             WSD	풍속	1	10
              */
             for(ObserveItem item : nowWeatherData.listBody) {
-                switch (item.category) {
+                switch (item.getCategory()) {
                     case "T1H":
-                        nowWeatherModel.nowTemp = item.obsrValue.split("\\.")[0]+"\u2103";
+                        nowWeatherModel.nowTemp = item.getObsrValue().split("\\.")[0]+"\u2103";
                         break;
                     case "RN1":
-                        nowWeatherModel.nowRain = item.obsrValue;
+                        nowWeatherModel.nowRain = item.getObsrValue();
                         break;
                     case "REH":
-                        nowWeatherModel.nowHumidity = item.obsrValue+"%";
+                        nowWeatherModel.nowHumidity = item.getObsrValue()+"%";
                         break;
                     case "PTY":
-                        nowWeatherModel.rainState = Enum.PTY.getStringValByVal(Integer.parseInt(item.obsrValue));
+                        nowWeatherModel.rainState = Enum.PTY.getStringValByVal(Integer.parseInt(item.getObsrValue()));
                         break;
                     case "VEC":
-                        nowWeatherModel.windDir = Enum.WIND_DIR.getStringValByVal(Integer.parseInt(item.obsrValue));
+                        nowWeatherModel.windDir = Enum.WIND_DIR.getStringValByVal(Integer.parseInt(item.getObsrValue()));
                         break;
                     case "WSD":
-                        nowWeatherModel.wind = item.obsrValue;
+                        nowWeatherModel.wind = item.getObsrValue();
                         break;
                 }
             }
             nowWeatherModel.nowWind = nowWeatherModel.windDir+" "+nowWeatherModel.wind;
 
             for(ForecastItem item : lowTempData.listBody) {
-                if(item.category.equals("TMN")) {
-                    nowWeatherModel.lowTemp = item.fcstValue.split("\\.")[0]+"\u2103";
+                if(item.getCategory().equals("TMN")) {
+                    nowWeatherModel.lowTemp = item.getFcstValue().split("\\.")[0]+"\u2103";
                     break;
                 }
             }
 
             for(ForecastItem item : highTempData.listBody) {
-                if(item.category.equals("TMX")) {
-                    nowWeatherModel.highTemp = item.fcstValue.split("\\.")[0]+"\u2103";
+                if(item.getCategory().equals("TMX")) {
+                    nowWeatherModel.highTemp = item.getFcstValue().split("\\.")[0]+"\u2103";
                     break;
                 }
             }
@@ -125,12 +125,12 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
             String baseTime = dateTime.toString("HHmm");
             int sky = -1, pty = -1;
             for(ForecastItem item : shortForecastData.listBody) {
-                if(item.fcstDate.equals(baseDate) && item.fcstTime.equals(baseTime)) {
-                    if(item.category.equals("PTY")) {
-                        pty = Integer.parseInt(item.fcstValue);
+                if(item.getFcstDate().equals(baseDate) && item.getFcstTime().equals(baseTime)) {
+                    if(item.getCategory().equals("PTY")) {
+                        pty = Integer.parseInt(item.getFcstValue());
                     }
-                    if(item.category.equals("SKY")) {
-                        sky = Integer.parseInt(item.fcstValue);
+                    if(item.getCategory().equals("SKY")) {
+                        sky = Integer.parseInt(item.getFcstValue());
                     }
                 }
             }

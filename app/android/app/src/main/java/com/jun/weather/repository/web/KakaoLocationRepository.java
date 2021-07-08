@@ -5,7 +5,7 @@ import android.content.Context;
 import com.jun.weather.R;
 import com.jun.weather.repository.web.api.APIClient;
 import com.jun.weather.repository.web.api.KakaoLocalService;
-import com.jun.weather.repository.web.api.entity.KakaoRegionCodeRes;
+import com.jun.weather.repository.web.api.KakaoRegionCodeRes;
 import com.jun.weather.repository.web.entity.Enum;
 import com.jun.weather.repository.web.entity.KakaoLocationInfoCacheKey;
 import com.jun.weather.repository.web.entity.RestResponse;

@@ -1,10 +1,8 @@
-package com.jun.weather.repository.web.entity;
+package com.jun.weather.repository.web.entity
 
-import java.util.List;
-
-public class RestResponse<T> {
-    public int code;
-    public String failMsg;
-    public List<T> listBody;
-    public T singleBody;
+class RestResponse<T> {
+    var code: Int = 0
+    var failMsg: String? = null
+    var listBody: List<T>? = null
+    var singleBody: T? = null
 }

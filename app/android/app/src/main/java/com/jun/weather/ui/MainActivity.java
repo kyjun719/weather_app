@@ -29,7 +29,7 @@ import com.jun.weather.BaseApplication;
 import com.jun.weather.R;
 import com.jun.weather.databinding.ActivityMainBinding;
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.entity.Enum;
+import com.jun.weather.repository.web.enums.Enums;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.util.CommonUtils;
 import com.jun.weather.util.GPSHelper;
@@ -57,9 +57,7 @@ public class MainActivity extends FragmentActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         BaseApplication application = (BaseApplication)getApplication();
-        AppRepository repository = application.getRepository();
-
-        weatherPointViewModel = new CustomViewModelProvider(getViewModelStore()).getWeatherPointViewModel(application, repository);
+        weatherPointViewModel = new CustomViewModelProvider(getViewModelStore()).getWeatherPointViewModel(application);
 
         loadAutoCompleteTextViewData();
         GeoLocationHelper.getInstance().init(this, this);
@@ -163,10 +161,10 @@ public class MainActivity extends FragmentActivity {
 
                 @Override
                 public void onFail(FailRestResponse failRestResponse) {
-                    CLogger.d(failRestResponse.code+">>"+failRestResponse.failMsg);
-                    if(failRestResponse.code == Enum.ResponseCode.PERMISSION_NOT_GRANTED.getValue() ||
-                            failRestResponse.code == Enum.ResponseCode.SETTING_NOT_GRANTED.getValue()) {
-                        runOnUiThread(() -> Toast.makeText(mContext, failRestResponse.failMsg, Toast.LENGTH_SHORT).show());
+                    CLogger.d(failRestResponse.getCode()+">>"+failRestResponse.getFailMsg());
+                    if(failRestResponse.getCode() == Enums.ResponseCode.PERMISSION_NOT_GRANTED.getValue() ||
+                            failRestResponse.getCode() == Enums.ResponseCode.SETTING_NOT_GRANTED.getValue()) {
+                        runOnUiThread(() -> Toast.makeText(mContext, failRestResponse.getFailMsg(), Toast.LENGTH_SHORT).show());
                     } else {
                         runOnUiThread(() -> Toast.makeText(mContext, "위치정보를 가져오는데 실패하였습니다.", Toast.LENGTH_SHORT).show());
                     }

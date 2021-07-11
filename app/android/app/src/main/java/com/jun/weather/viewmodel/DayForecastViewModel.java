@@ -6,8 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.ForecastItem;
+import com.jun.weather.repository.web.entity.ForecastItem;
 import com.jun.weather.repository.web.entity.RestResponse;
+import com.jun.weather.repository.web.enums.Enums;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.util.CommonUtils;
 import com.jun.weather.viewmodel.entity.DayForecastModel;
@@ -44,20 +45,22 @@ public class DayForecastViewModel extends CustomViewModel<List<DayForecastModel>
         }
 
         FailRestResponse failRestResponse = new FailRestResponse();
-        if(shortForecastData.code != com.jun.weather.repository.web.entity.Enum.ResponseCode.OK.getValue()) {
-            failRestResponse.code = shortForecastData.code;
-            failRestResponse.failMsg = shortForecastData.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
-        } else if(ultraShortForecastData.code != com.jun.weather.repository.web.entity.Enum.ResponseCode.OK.getValue()) {
-            failRestResponse.code = ultraShortForecastData.code;
-            failRestResponse.failMsg = ultraShortForecastData.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
+        if(shortForecastData.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() ->
+                    updateFailData.setValue(
+                            new FailRestResponse(shortForecastData.getCode(),
+                                    shortForecastData.getFailMsg()))
+            );
+        } else if(ultraShortForecastData.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() ->
+                    updateFailData.setValue(
+                            new FailRestResponse(ultraShortForecastData.getCode(),
+                                    ultraShortForecastData.getFailMsg()))
+            );
         } else {
             Map<Double, DayForecastModel> map = new HashMap<>();
-            List<ForecastItem> itemList = new ArrayList<>(shortForecastData.listBody);
-            itemList.addAll(ultraShortForecastData.listBody);
+            List<ForecastItem> itemList = new ArrayList<>(shortForecastData.getListBody());
+            itemList.addAll(ultraShortForecastData.getListBody());
             for(ForecastItem item : itemList) {
                 double date = Double.parseDouble(item.getFcstDate()+item.getFcstTime());
                 if(map.get(date) == null) {

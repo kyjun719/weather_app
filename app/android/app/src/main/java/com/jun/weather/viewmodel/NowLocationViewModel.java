@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.KakaoRegionCodeRes;
-import com.jun.weather.repository.web.api.RegionItem;
-import com.jun.weather.repository.web.entity.Enum;
+import com.jun.weather.repository.web.entity.KakaoRegionCodeRes;
+import com.jun.weather.repository.web.entity.RegionItem;
 import com.jun.weather.repository.web.entity.RestResponse;
+import com.jun.weather.repository.web.enums.Enums;
 import com.jun.weather.viewmodel.entity.FailRestResponse;
 import com.jun.weather.viewmodel.entity.NowLocationModel;
 
@@ -22,14 +22,12 @@ public class NowLocationViewModel extends CustomViewModel<NowLocationModel> {
     }
 
     private void updateNowLocationModel(RestResponse<KakaoRegionCodeRes> data1) {
-        if(data1.code != Enum.ResponseCode.OK.getValue()) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = data1.code;
-            failRestResponse.failMsg = data1.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
+        if(data1.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(data1.getCode(), data1.getFailMsg())
+            ));
         } else {
-            KakaoRegionCodeRes kakaoRegionCodeRes = data1.singleBody;
+            KakaoRegionCodeRes kakaoRegionCodeRes = data1.getSingleBody();
             NowLocationModel locationModel = new NowLocationModel();
             for(RegionItem item : kakaoRegionCodeRes.getDocuments()) {
                 NowLocationModel.NowLocation nowLocation = new NowLocationModel.NowLocation();

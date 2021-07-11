@@ -52,10 +52,8 @@ import java.util.Locale;
 public class NowWeatherFragment extends Fragment {
     private NowWeatherViewModel weatherViewModel;
     private DayForecastViewModel dayForecastViewModel;
-    private FragmentDayWeatherBinding mBinding;
+    private FragmentDayWeatherBinding binding;
     private WeatherPointModel.WeatherPoint pointModel;
-    private Activity mActivity;
-    private ImageButton btn_rain, btn_humidity, btn_temp;
 
     enum SelectedItem {
         EMPTY, TEMP, HUMIDITY, RAIN
@@ -64,28 +62,44 @@ public class NowWeatherFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_weather, container, false);
-        return mBinding.getRoot();
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_weather, container, false);
+
+        BaseApplication application = ((BaseApplication)requireActivity().getApplication());
+        weatherViewModel = new CustomViewModelProvider(getViewModelStore()).getNowWeatherViewModel(application);
+        dayForecastViewModel = new CustomViewModelProvider(getViewModelStore()).getDayForecastViewModel(application);
+
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((CombinedChart)view.findViewById(R.id.line_chart)).setNoDataText(getResources().getString(R.string.no_location_selected));
-        btn_rain = view.findViewById(R.id.btn_rain);
-        btn_rain.setTag(SelectedItem.RAIN);
-        btn_rain.setOnClickListener((v) -> changeGraphData(v.getTag()));
-
-        btn_humidity = view.findViewById(R.id.btn_humidity);
-        btn_humidity.setTag(SelectedItem.HUMIDITY);
-        btn_humidity.setOnClickListener((v) -> changeGraphData(v.getTag()));
-
-        btn_temp = view.findViewById(R.id.btn_temp);
-        btn_temp.setTag(SelectedItem.TEMP);
-        btn_temp.setOnClickListener((v) -> changeGraphData(v.getTag()));
+        initView();
+        initObserver();
 
         changeGraphData(SelectedItem.TEMP);
+    }
+
+    private void initView() {
+        binding.lineChart.setNoDataText(getResources().getString(R.string.no_location_selected));
+
+        binding.btnRain.setTag(SelectedItem.RAIN);
+        binding.btnRain.setOnClickListener((v) -> changeGraphData(v.getTag()));
+
+        binding.btnHumidity.setTag(SelectedItem.HUMIDITY);
+        binding.btnHumidity.setOnClickListener((v) -> changeGraphData(v.getTag()));
+
+        binding.btnTemp.setTag(SelectedItem.TEMP);
+        binding.btnTemp.setOnClickListener((v) -> changeGraphData(v.getTag()));
+    }
+
+    private void initObserver() {
+        weatherViewModel.getData().observe(getViewLifecycleOwner(), nowWeatherModel -> updateNowWeatherData(nowWeatherModel));
+        weatherViewModel.getUpdateFailData().observe(getViewLifecycleOwner(), failRestResponse -> nowWeatherDataFailProcess(failRestResponse));
+
+        dayForecastViewModel.getData().observe(getViewLifecycleOwner(), dayForecastModels -> updateDayForecastData(dayForecastModels));
+        dayForecastViewModel.getUpdateFailData().observe(getViewLifecycleOwner(), failRestResponse -> dayForecastDateFailProcess(failRestResponse));
     }
 
     private SelectedItem selectedItem = SelectedItem.EMPTY;
@@ -101,26 +115,26 @@ public class NowWeatherFragment extends Fragment {
 
         switch (selectedItem) {
             case RAIN:
-                btn_rain.setImageResource(R.drawable.ic_rain_normal);
+                binding.btnRain.setImageResource(R.drawable.ic_rain_normal);
                 break;
             case TEMP:
-                btn_temp.setImageResource(R.drawable.ic_temperature_normal);
+                binding.btnTemp.setImageResource(R.drawable.ic_temperature_normal);
                 break;
             case HUMIDITY:
-                btn_humidity.setImageResource(R.drawable.ic_thermometer_normal);
+                binding.btnHumidity.setImageResource(R.drawable.ic_thermometer_normal);
                 break;
         }
 
         selectedItem = newSelected;
         switch (selectedItem) {
             case RAIN:
-                btn_rain.setImageResource(R.drawable.ic_rain_accent);
+                binding.btnRain.setImageResource(R.drawable.ic_rain_accent);
                 break;
             case TEMP:
-                btn_temp.setImageResource(R.drawable.ic_temperature_accent);
+                binding.btnTemp.setImageResource(R.drawable.ic_temperature_accent);
                 break;
             case HUMIDITY:
-                btn_humidity.setImageResource(R.drawable.ic_thermometer_accent);
+                binding.btnHumidity.setImageResource(R.drawable.ic_thermometer_accent);
                 break;
         }
 
@@ -129,60 +143,33 @@ public class NowWeatherFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mActivity = (Activity) context;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        FragmentActivity fragmentActivity = getActivity();
-        if(fragmentActivity != null) {
-            ((MainActivity) mActivity).addFragment(this);
-
-            BaseApplication application = ((BaseApplication)mActivity.getApplication());
-            AppRepository appRepository = application.getRepository();
-
-            weatherViewModel = new CustomViewModelProvider(getViewModelStore()).getNowWeatherViewModel(application, appRepository);
-            weatherViewModel.getData().observe(getViewLifecycleOwner(), nowWeatherModel -> updateNowWeatherData(nowWeatherModel));
-            weatherViewModel.getUpdateFailData().observe(this, failRestResponse -> nowWeatherDataFailProcess(failRestResponse));
-
-            dayForecastViewModel = new CustomViewModelProvider(getViewModelStore()).getDayForecastViewModel(application, appRepository);
-            dayForecastViewModel.getData().observe(getViewLifecycleOwner(), dayForecastModels -> updateDayForecastData(dayForecastModels));
-            dayForecastViewModel.getUpdateFailData().observe(this, failRestResponse -> dayForecastDateFailProcess(failRestResponse));
-        }
-    }
-
     public void updateWeather(WeatherPointModel.WeatherPoint point) {
         pointModel = point;
-        ((MainActivity) mActivity).setLoading(true);
+        ((MainActivity) requireActivity()).setLoading(true);
         weatherViewModel.updateNowWeather(point.x,point.y);
         dayForecastViewModel.updateShortForecastData(point.x, point.y);
     }
 
     private int failCnt = 0;
     private void nowWeatherDataFailProcess(FailRestResponse failRestResponse) {
-        CLogger.d(failRestResponse.code + ">>" + failRestResponse.failMsg);
+        CLogger.d(failRestResponse.getCode() + ">>" + failRestResponse.getFailMsg());
         if(failCnt < 5) {
             failCnt++;
             weatherViewModel.updateNowWeather(pointModel.x,pointModel.y);
         } else {
             failCnt = 0;
-            ((MainActivity) mActivity).setUpdateFailUi();
+            ((MainActivity) requireActivity()).setUpdateFailUi();
         }
     }
 
     private void dayForecastDateFailProcess(FailRestResponse failRestResponse) {
-        CLogger.d(failRestResponse.code+">>"+failRestResponse.failMsg);
+        CLogger.d(failRestResponse.getCode()+">>"+failRestResponse.getFailMsg());
         if(failCnt < 5) {
             failCnt++;
             dayForecastViewModel.updateShortForecastData(pointModel.x, pointModel.y);
         } else {
             failCnt = 0;
-            ((MainActivity) mActivity).setUpdateFailUi();
+            ((MainActivity) requireActivity()).setUpdateFailUi();
         }
     }
 
@@ -191,10 +178,10 @@ public class NowWeatherFragment extends Fragment {
             return;
         }
 
-        ((MainActivity) mActivity).setLoading(false);
-        mBinding.setNowWeather(nowWeatherModel);
+        ((MainActivity) requireActivity()).setLoading(false);
+        binding.setNowWeather(nowWeatherModel);
         CLogger.d(nowWeatherModel.toString());
-        Glide.with(this).load(nowWeatherModel.nowSkyDrawableId).into((ImageView) mActivity.findViewById(R.id.image_sky));
+        Glide.with(this).load(nowWeatherModel.nowSkyDrawableId).into((ImageView) requireActivity().findViewById(R.id.image_sky));
     }
 
     private String[] rainStrValArr = {"없음", "1mm미만", "1~4mm", "5~9mm", "10~19mm", "20~39mm", "40~69mm", "70mm 이상"};
@@ -289,7 +276,7 @@ public class NowWeatherFragment extends Fragment {
         });
         lineData.setValueTextSize(18);
 
-        CombinedChart combinedChart = mActivity.findViewById(R.id.line_chart);
+        CombinedChart combinedChart = binding.lineChart;
         combinedChart.clear();
         combinedChart.setData(null);
         CombinedData combinedData = new CombinedData();

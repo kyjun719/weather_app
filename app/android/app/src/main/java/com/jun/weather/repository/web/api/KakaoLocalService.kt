@@ -1,13 +1,12 @@
-package com.jun.weather.repository.web.api;
+package com.jun.weather.repository.web.api
 
-import java.util.Map;
+import com.jun.weather.repository.web.entity.KakaoRegionCodeRes
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.QueryMap
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.QueryMap;
-
-public interface KakaoLocalService {
+interface KakaoLocalService {
     @GET("/v2/local/geo/coord2regioncode.json")
-    Call<KakaoRegionCodeRes> getReverseGeocodeAddress(@Header("Authorization") String authorization, @QueryMap Map<String, Object> query);
+    fun getReverseGeocodeAddress(@Header("Authorization") authorization: String, @QueryMap query: Map<String, Any>?): Call<KakaoRegionCodeRes>
 }

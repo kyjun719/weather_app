@@ -6,9 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.ForecastItem;
-import com.jun.weather.repository.web.api.ObserveItem;
+import com.jun.weather.repository.web.entity.ForecastItem;
+import com.jun.weather.repository.web.entity.ObserveItem;
 import com.jun.weather.repository.web.entity.RestResponse;
+import com.jun.weather.repository.web.enums.Enums;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.util.CommonUtils;
 import com.jun.weather.viewmodel.entity.Enum;
@@ -46,30 +47,30 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
         }
 
         FailRestResponse failRestResponse = new FailRestResponse();
-        if(nowWeatherData.code != com.jun.weather.repository.web.entity.Enum.ResponseCode.OK.getValue()) {
-            failRestResponse.code = nowWeatherData.code;
-            failRestResponse.failMsg = nowWeatherData.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
-        } else if(lowTempData.code != com.jun.weather.repository.web.entity.Enum.ResponseCode.OK.getValue()) {
-            failRestResponse.code = lowTempData.code;
-            failRestResponse.failMsg = lowTempData.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
-        } else if(highTempData.code != com.jun.weather.repository.web.entity.Enum.ResponseCode.OK.getValue()) {
-            failRestResponse.code = highTempData.code;
-            failRestResponse.failMsg = highTempData.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
-        } else if(shortForecastData.code != com.jun.weather.repository.web.entity.Enum.ResponseCode.OK.getValue()) {
-            failRestResponse.code = shortForecastData.code;
-            failRestResponse.failMsg = shortForecastData.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
+        if(nowWeatherData.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(nowWeatherData.getCode(), nowWeatherData.getFailMsg())
+                    )
+            );
+        } else if(lowTempData.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(lowTempData.getCode(), lowTempData.getFailMsg())
+                    )
+            );
+        } else if(highTempData.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(highTempData.getCode(), highTempData.getFailMsg())
+                    )
+            );
+        } else if(shortForecastData.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(shortForecastData.getCode(), shortForecastData.getFailMsg())
+                    )
+            );
         } else {
             NowWeatherModel nowWeatherModel = new NowWeatherModel();
-            nowWeatherModel.baseDate = nowWeatherData.listBody.get(0).getBaseDate();
-            nowWeatherModel.baseTime = nowWeatherData.listBody.get(0).getBaseTime();
+            nowWeatherModel.baseDate = nowWeatherData.getListBody().get(0).getBaseDate();
+            nowWeatherModel.baseTime = nowWeatherData.getListBody().get(0).getBaseTime();
             nowWeatherModel.nowBaseTime = "기준시간: "+nowWeatherModel.baseDate+" "+nowWeatherModel.baseTime;
 
             /*
@@ -82,7 +83,7 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
             VEC	풍향	0	10
             WSD	풍속	1	10
              */
-            for(ObserveItem item : nowWeatherData.listBody) {
+            for(ObserveItem item : nowWeatherData.getListBody()) {
                 switch (item.getCategory()) {
                     case "T1H":
                         nowWeatherModel.nowTemp = item.getObsrValue().split("\\.")[0]+"\u2103";
@@ -106,14 +107,14 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
             }
             nowWeatherModel.nowWind = nowWeatherModel.windDir+" "+nowWeatherModel.wind;
 
-            for(ForecastItem item : lowTempData.listBody) {
+            for(ForecastItem item : lowTempData.getListBody()) {
                 if(item.getCategory().equals("TMN")) {
                     nowWeatherModel.lowTemp = item.getFcstValue().split("\\.")[0]+"\u2103";
                     break;
                 }
             }
 
-            for(ForecastItem item : highTempData.listBody) {
+            for(ForecastItem item : highTempData.getListBody()) {
                 if(item.getCategory().equals("TMX")) {
                     nowWeatherModel.highTemp = item.getFcstValue().split("\\.")[0]+"\u2103";
                     break;
@@ -124,7 +125,7 @@ public class NowWeatherViewModel extends CustomViewModel<NowWeatherModel> {
             String baseDate = dateTime.toString("yyyyMMdd");
             String baseTime = dateTime.toString("HHmm");
             int sky = -1, pty = -1;
-            for(ForecastItem item : shortForecastData.listBody) {
+            for(ForecastItem item : shortForecastData.getListBody()) {
                 if(item.getFcstDate().equals(baseDate) && item.getFcstTime().equals(baseTime)) {
                     if(item.getCategory().equals("PTY")) {
                         pty = Integer.parseInt(item.getFcstValue());

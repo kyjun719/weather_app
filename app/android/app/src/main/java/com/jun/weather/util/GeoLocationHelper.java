@@ -11,7 +11,7 @@ import androidx.lifecycle.LiveData;
 
 import com.jun.weather.BaseApplication;
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.entity.Enum;
+import com.jun.weather.repository.web.enums.Enums;
 import com.jun.weather.viewmodel.CustomViewModelProvider;
 import com.jun.weather.viewmodel.NowLocationViewModel;
 import com.jun.weather.viewmodel.WeatherPointViewModel;
@@ -50,19 +50,13 @@ public class GeoLocationHelper {
         }
 
         @Override
-        public void onCanceled(Enum.ResponseCode code, String msg) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = code.getValue();
-            failRestResponse.failMsg = msg;
-            geoLocationResultListener.onFail(failRestResponse);
+        public void onCanceled(Enums.ResponseCode code, String msg) {
+            geoLocationResultListener.onFail(new FailRestResponse(code.getValue(), msg));
         }
 
         @Override
-        public void onFail(Enum.ResponseCode code, String msg) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = code.getValue();
-            failRestResponse.failMsg = msg;
-            geoLocationResultListener.onFail(failRestResponse);
+        public void onFail(Enums.ResponseCode code, String msg) {
+            geoLocationResultListener.onFail(new FailRestResponse(code.getValue(), msg));
         }
     };
 
@@ -76,9 +70,9 @@ public class GeoLocationHelper {
         AppRepository appRepository = application.getRepository();
 
         nowLocationViewModel = new CustomViewModelProvider(
-                ((ComponentActivity)context).getViewModelStore()).getNowLocationViewModel(application, appRepository);
+                ((ComponentActivity)context).getViewModelStore()).getNowLocationViewModel(application);
         weatherPointViewModel = new CustomViewModelProvider(
-                ((ComponentActivity)context).getViewModelStore()).getWeatherPointViewModel(application, appRepository);
+                ((ComponentActivity)context).getViewModelStore()).getWeatherPointViewModel(application);
 
         LiveData<WeatherPointModel> weatherPointModelList = weatherPointViewModel.getData();
         LiveData<NowLocationModel> nowLocationModelLiveData = nowLocationViewModel.getData();
@@ -104,10 +98,7 @@ public class GeoLocationHelper {
         WeatherPointModel.WeatherPoint weatherPoint = getPoint(nowLocationModel, weatherPointModel);
 
         if(weatherPoint == null) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = Enum.ResponseCode.EXCEPTION_ERROR.getValue();
-            failRestResponse.failMsg = "fail to find weather point";
-            geoLocationResultListener.onFail(failRestResponse);
+            geoLocationResultListener.onFail(new FailRestResponse(Enums.ResponseCode.EXCEPTION_ERROR.getValue(), "fail to find weather point"));
         } else {
             geoLocationResultListener.onSuccess(weatherPoint);
             GPSHelper.getInstance().stopGPSLocationUpdate();

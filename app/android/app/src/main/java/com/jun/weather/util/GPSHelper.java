@@ -17,7 +17,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
-import com.jun.weather.repository.web.entity.Enum;
+import com.jun.weather.repository.web.enums.Enums;
 
 public class GPSHelper {
     private static GPSHelper instance;
@@ -44,7 +44,7 @@ public class GPSHelper {
 
     private boolean checkNotInit() {
         if(!isInitialized) {
-            locationResultListener.onFail(Enum.ResponseCode.EXCEPTION_ERROR, "GPSHelper not initialized");
+            locationResultListener.onFail(Enums.ResponseCode.EXCEPTION_ERROR, "GPSHelper not initialized");
             return true;
         }
 
@@ -71,7 +71,7 @@ public class GPSHelper {
         if(granted) {
             getNowLocation(context);
         } else {
-            locationResultListener.onFail(Enum.ResponseCode.PERMISSION_NOT_GRANTED, "현재위치를 확인하기 위해서 권한을 허용해주시기 바랍니다.");
+            locationResultListener.onFail(Enums.ResponseCode.PERMISSION_NOT_GRANTED, "현재위치를 확인하기 위해서 권한을 허용해주시기 바랍니다.");
         }
     }
 
@@ -127,9 +127,9 @@ public class GPSHelper {
 
         providerClient.getLastLocation().addOnCompleteListener((Activity) context, task -> {
             if(task.isCanceled()) {
-                locationResultListener.onCanceled(Enum.ResponseCode.EXCEPTION_ERROR, "취소하였습니다.");
+                locationResultListener.onCanceled(Enums.ResponseCode.EXCEPTION_ERROR, "취소하였습니다.");
             } else if(!task.isSuccessful()) {
-                locationResultListener.onFail(Enum.ResponseCode.EXCEPTION_ERROR,
+                locationResultListener.onFail(Enums.ResponseCode.EXCEPTION_ERROR,
                         task.getException()==null?"에러발생":task.getException().getLocalizedMessage());
             }
         });
@@ -167,15 +167,15 @@ public class GPSHelper {
         if(resultCode == Activity.RESULT_OK) {
             getNowLocation(context);
         } else if(resultCode == Activity.RESULT_CANCELED) {
-            locationResultListener.onCanceled(Enum.ResponseCode.SETTING_NOT_GRANTED, "설정에서 GPS를 켜주시기 바랍니다.");
+            locationResultListener.onCanceled(Enums.ResponseCode.SETTING_NOT_GRANTED, "설정에서 GPS를 켜주시기 바랍니다.");
         } else {
-            locationResultListener.onFail(Enum.ResponseCode.EXCEPTION_ERROR, "에러발생");
+            locationResultListener.onFail(Enums.ResponseCode.EXCEPTION_ERROR, "에러발생");
         }
     }
 
     public interface LocationResultListener {
         void onSuccess(Location location);
-        void onCanceled(Enum.ResponseCode responseCode, String msg);
-        void onFail(Enum.ResponseCode responseCode, String msg);
+        void onCanceled(Enums.ResponseCode responseCode, String msg);
+        void onFail(Enums.ResponseCode responseCode, String msg);
     }
 }

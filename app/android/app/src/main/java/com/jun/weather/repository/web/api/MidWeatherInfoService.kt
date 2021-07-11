@@ -1,15 +1,16 @@
-package com.jun.weather.repository.web.api;
+package com.jun.weather.repository.web.api
 
-import java.util.Map;
+import com.jun.weather.repository.web.entity.ApiResponse
+import com.jun.weather.repository.web.entity.MidLandItem
+import com.jun.weather.repository.web.entity.MidTempItem
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.QueryMap
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.QueryMap;
-
-public interface MidWeatherInfoService {
+interface MidWeatherInfoService {
     @GET("getMidLandFcst")
-    Call<ApiResponse<MidLandItem>> getMidLandFcst(@QueryMap Map<String, Object> query);
+    fun getMidLandFcst(@QueryMap query: Map<String, Any>): Call<ApiResponse<MidLandItem>>
 
     @GET("getMidTa")
-    Call<ApiResponse<MidTempItem>> getMidTa(@QueryMap Map<String, Object> query);
+    fun getMidTa(@QueryMap query: Map<String, Any>): Call<ApiResponse<MidTempItem>>
 }

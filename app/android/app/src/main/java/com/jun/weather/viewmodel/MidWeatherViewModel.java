@@ -7,10 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.jun.weather.repository.AppRepository;
-import com.jun.weather.repository.web.api.MidLandItem;
-import com.jun.weather.repository.web.api.MidTempItem;
-import com.jun.weather.repository.web.entity.Enum;
+import com.jun.weather.repository.web.entity.MidLandItem;
+import com.jun.weather.repository.web.entity.MidTempItem;
 import com.jun.weather.repository.web.entity.RestResponse;
+import com.jun.weather.repository.web.enums.Enums;
 import com.jun.weather.util.CLogger;
 import com.jun.weather.util.CommonUtils;
 import com.jun.weather.viewmodel.entity.FailRestResponse;
@@ -38,24 +38,18 @@ public class MidWeatherViewModel extends CustomViewModel<SparseArray<MidForecast
             return;
         }
 
-        if(data1.code != Enum.ResponseCode.OK.getValue()) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = data1.code;
-            failRestResponse.failMsg = "land forecast fail,"+data1.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
-        } else if(data2.code != Enum.ResponseCode.OK.getValue()) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = data2.code;
-            failRestResponse.failMsg = "temp forecast fail,"+data2.failMsg;
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
-        } else if(data1.listBody.size() == 0 || data2.listBody.size() == 0) {
-            FailRestResponse failRestResponse = new FailRestResponse();
-            failRestResponse.code = Enum.ResponseCode.EXCEPTION_ERROR.getValue();
-            failRestResponse.failMsg = "data is empty";
-
-            appExecutor.runInUIIO(() -> updateFailData.setValue(failRestResponse));
+        if(data1.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(data1.getCode(), "land forecast fail,"+data1.getFailMsg()))
+            );
+        } else if(data2.getCode() != Enums.ResponseCode.OK.getValue()) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(data2.getCode(), "land forecast fail,"+data2.getFailMsg()))
+            );
+        } else if(data1.getListBody().size() == 0 || data2.getListBody().size() == 0) {
+            appExecutor.runInUIIO(() -> updateFailData.setValue(
+                    new FailRestResponse(Enums.ResponseCode.EXCEPTION_ERROR.getValue(), "data is empty")
+            ));
         } else {
             if(baseDate == null) {
                 setBaseDate();
@@ -70,8 +64,8 @@ public class MidWeatherViewModel extends CustomViewModel<SparseArray<MidForecast
 
     private void parseData(SparseArray<MidForecastModel> sparseArray, RestResponse<MidLandItem> data1,
                            RestResponse<MidTempItem> data2) {
-        MidLandItem midLandItem = data1.listBody.get(0);
-        MidTempItem midTempItem = data2.listBody.get(0);
+        MidLandItem midLandItem = data1.getListBody().get(0);
+        MidTempItem midTempItem = data2.getListBody().get(0);
 
         int keyIdx = isYesterdayBase?3:4;
         for(int i = 3; i <= 10; i++) {

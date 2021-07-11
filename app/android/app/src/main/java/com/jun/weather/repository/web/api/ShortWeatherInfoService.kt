@@ -1,18 +1,19 @@
-package com.jun.weather.repository.web.api;
+package com.jun.weather.repository.web.api
 
-import java.util.Map;
+import com.jun.weather.repository.web.entity.ApiResponse
+import com.jun.weather.repository.web.entity.ForecastItem
+import com.jun.weather.repository.web.entity.ObserveItem
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.QueryMap
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.QueryMap;
-
-public interface ShortWeatherInfoService {
+interface ShortWeatherInfoService {
     @GET("getUltraSrtNcst")
-    Call<ApiResponse<ObserveItem>> getUltraSrtNcst(@QueryMap Map<String, Object> query);
+    fun getUltraSrtNcst(@QueryMap query: Map<String, Any>): Call<ApiResponse<ObserveItem>>
 
     @GET("getVilageFcst")
-    Call<ApiResponse<ForecastItem>> getVilageFcst(@QueryMap Map<String, Object> query);
+    fun getVilageFcst(@QueryMap query: Map<String, Any>): Call<ApiResponse<ForecastItem>>
 
     @GET("getUltraSrtFcst")
-    Call<ApiResponse<ForecastItem>> getUltraSrtFcst(@QueryMap Map<String, Object> query);
+    fun getUltraSrtFcst(@QueryMap query: Map<String, Any>): Call<ApiResponse<ForecastItem>>
 }

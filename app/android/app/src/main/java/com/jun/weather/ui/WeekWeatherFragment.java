@@ -31,6 +31,7 @@ import com.jun.weather.viewmodel.entity.MidForecastModel;
 import com.jun.weather.viewmodel.entity.NowWeatherModel;
 import com.jun.weather.viewmodel.entity.WeatherPointModel;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
@@ -50,7 +51,42 @@ public class WeekWeatherFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_week_weather, container, false);
+
+        BaseApplication application = ((BaseApplication)requireActivity().getApplication());
+        midWeatherViewModel = new CustomViewModelProvider(getViewModelStore()).getMidWeatherViewModel(application);
+        weatherViewModel = new CustomViewModelProvider(getViewModelStore()).getNowWeatherViewModel(application);
+        dayForecastViewModel = new CustomViewModelProvider(getViewModelStore()).getDayForecastViewModel(application);
+
         return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mBinding.setDataSet(false);
+
+        initView();
+        initObserver();
+
+        if(pointModel != null) {
+            updateWeather(pointModel);
+        }
+    }
+
+    private void initView() {
+    }
+
+    private void initObserver() {
+        midWeatherViewModel.getUpdateFailData().observe(getViewLifecycleOwner(), failRestResponse -> midWeatherDataFailProcess(failRestResponse));
+
+        LiveData<NowWeatherModel> data1 = weatherViewModel.getData();
+        LiveData<List<DayForecastModel>> data2 = dayForecastViewModel.getData();
+        LiveData<SparseArray<MidForecastModel>> data3 = midWeatherViewModel.getData();
+
+        data1.observe(getViewLifecycleOwner(), data -> updateMidWeatherData(data, data2.getValue(), data3.getValue()));
+        data2.observe(getViewLifecycleOwner(), data -> updateMidWeatherData(data1.getValue(), data, data3.getValue()));
+        data3.observe(getViewLifecycleOwner(), data -> updateMidWeatherData(data1.getValue(), data2.getValue(), data));
     }
 
     @Override
@@ -70,26 +106,7 @@ public class WeekWeatherFragment extends Fragment {
             BaseApplication application = ((BaseApplication)mActivity.getApplication());
             AppRepository appRepository = application.getRepository();
 
-            mBinding.setDataSet(false);
 
-            midWeatherViewModel = new CustomViewModelProvider(getViewModelStore()).getMidWeatherViewModel(application, appRepository);
-            midWeatherViewModel.getUpdateFailData().observe(this, failRestResponse -> midWeatherDataFailProcess(failRestResponse));
-
-            weatherViewModel = new CustomViewModelProvider(getViewModelStore()).getNowWeatherViewModel(application, appRepository);
-
-            dayForecastViewModel = new CustomViewModelProvider(getViewModelStore()).getDayForecastViewModel(application, appRepository);
-
-            LiveData<NowWeatherModel> data1 = weatherViewModel.getData();
-            LiveData<List<DayForecastModel>> data2 = dayForecastViewModel.getData();
-            LiveData<SparseArray<MidForecastModel>> data3 = midWeatherViewModel.getData();
-
-            data1.observe(getViewLifecycleOwner(), data -> updateMidWeatherData(data, data2.getValue(), data3.getValue()));
-            data2.observe(getViewLifecycleOwner(), data -> updateMidWeatherData(data1.getValue(), data, data3.getValue()));
-            data3.observe(getViewLifecycleOwner(), data -> updateMidWeatherData(data1.getValue(), data2.getValue(), data));
-
-            if(pointModel != null) {
-                updateWeather(pointModel);
-            }
         }
     }
 
@@ -258,7 +275,7 @@ public class WeekWeatherFragment extends Fragment {
     private int failCnt = 0;
     private WeatherPointModel.WeatherPoint pointModel;
     private void midWeatherDataFailProcess(FailRestResponse failRestResponse) {
-        CLogger.d(failRestResponse.code + ">>" + failRestResponse.failMsg);
+        CLogger.d(failRestResponse.getCode() + ">>" + failRestResponse.getFailMsg());
         if(failCnt < 5) {
             failCnt++;
             midWeatherViewModel.updateMidWeather(pointModel.midWeatherCode, pointModel.midTempCode);

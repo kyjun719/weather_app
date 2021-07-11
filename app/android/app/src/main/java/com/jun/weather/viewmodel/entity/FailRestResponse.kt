@@ -1,6 +1,6 @@
-package com.jun.weather.viewmodel.entity;
+package com.jun.weather.viewmodel.entity
 
-public class FailRestResponse {
-    public int code;
-    public String failMsg;
-}
+data class FailRestResponse (
+        val code: Int = 0,
+        val failMsg: String? = null,
+)

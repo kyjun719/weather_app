@@ -10,11 +10,11 @@ import com.jun.weather.repository.db.FileRepository;
 import com.jun.weather.repository.db.RoomRepository;
 import com.jun.weather.repository.web.KakaoLocationRepository;
 import com.jun.weather.repository.web.WeatherInfoRepository;
-import com.jun.weather.repository.web.api.ForecastItem;
-import com.jun.weather.repository.web.api.KakaoRegionCodeRes;
-import com.jun.weather.repository.web.api.MidLandItem;
-import com.jun.weather.repository.web.api.MidTempItem;
-import com.jun.weather.repository.web.api.ObserveItem;
+import com.jun.weather.repository.web.entity.ForecastItem;
+import com.jun.weather.repository.web.entity.KakaoRegionCodeRes;
+import com.jun.weather.repository.web.entity.MidLandItem;
+import com.jun.weather.repository.web.entity.MidTempItem;
+import com.jun.weather.repository.web.entity.ObserveItem;
 import com.jun.weather.repository.web.entity.RestResponse;
 
 import java.util.List;
@@ -36,9 +36,9 @@ public class AppRepository {
 
     private AppRepository(Context context, AppExecutor executor) {
         appExecutor = executor;
-        weatherInfoRepository = WeatherInfoRepository.getInstance(context);
+        weatherInfoRepository = new WeatherInfoRepository(context);
         fileRepository = new FileRepository();
-        kakaoLocationRepository = KakaoLocationRepository.getInstance(context);
+        kakaoLocationRepository = new KakaoLocationRepository(context);
     }
 
     public void init(Context context) {

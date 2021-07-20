@@ -6,7 +6,7 @@
     <!-- data binding-->
     <data>
         <import type="android.view.View" />
-        <import type="com.jun.weather.viewmodel.entity.WeatherPointModel.WeatherPoint"
+        <import type="com.jun.weather.ui.entity.WeatherPointModel"
             alias="WeatherPoint"/>
         <import type="java.util.List"/>
         <variable

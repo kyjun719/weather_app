@@ -3,7 +3,7 @@ package com.jun.weather.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.jun.weather.viewmodel.entity.WeatherPointModel;
+import com.jun.weather.ui.entity.WeatherPointModel;
 
 import java.util.ArrayList;
 import java.util.List;

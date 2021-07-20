@@ -12,12 +12,11 @@ import androidx.lifecycle.LiveData;
 import com.jun.weather.BaseApplication;
 import com.jun.weather.repository.AppRepository;
 import com.jun.weather.repository.web.enums.Enums;
-import com.jun.weather.viewmodel.CustomViewModelProvider;
 import com.jun.weather.viewmodel.NowLocationViewModel;
 import com.jun.weather.viewmodel.WeatherPointViewModel;
-import com.jun.weather.viewmodel.entity.FailRestResponse;
-import com.jun.weather.viewmodel.entity.NowLocationModel;
-import com.jun.weather.viewmodel.entity.WeatherPointModel;
+import com.jun.weather.ui.entity.FailRestResponse;
+import com.jun.weather.ui.entity.NowLocationModel;
+import com.jun.weather.ui.entity.WeatherPointModel;
 
 import java.util.Arrays;
 import java.util.HashMap;

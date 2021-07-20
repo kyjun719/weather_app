@@ -1,20 +1,16 @@
 package com.jun.weather.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -33,15 +29,13 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.jun.weather.BaseApplication;
 import com.jun.weather.R;
 import com.jun.weather.databinding.FragmentDayWeatherBinding;
-import com.jun.weather.repository.AppRepository;
 import com.jun.weather.util.CLogger;
-import com.jun.weather.viewmodel.CustomViewModelProvider;
 import com.jun.weather.viewmodel.DayForecastViewModel;
 import com.jun.weather.viewmodel.NowWeatherViewModel;
-import com.jun.weather.viewmodel.entity.DayForecastModel;
-import com.jun.weather.viewmodel.entity.FailRestResponse;
-import com.jun.weather.viewmodel.entity.NowWeatherModel;
-import com.jun.weather.viewmodel.entity.WeatherPointModel;
+import com.jun.weather.ui.entity.DayForecastModel;
+import com.jun.weather.ui.entity.FailRestResponse;
+import com.jun.weather.ui.entity.NowWeatherModel;
+import com.jun.weather.ui.entity.WeatherPointModel;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <import type="com.jun.weather.viewmodel.entity.WeatherPointModel.WeatherPoint"
+        <import type="com.jun.weather.ui.entity.WeatherPointModel"
             alias="WeatherPoint"/>
         <import type="java.util.List"/>
         <variable

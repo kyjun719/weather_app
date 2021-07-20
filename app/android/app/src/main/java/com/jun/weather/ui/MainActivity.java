@@ -25,20 +25,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.jun.weather.BaseApplication;
 import com.jun.weather.R;
 import com.jun.weather.databinding.ActivityMainBinding;
-import com.jun.weather.repository.AppRepository;
 import com.jun.weather.repository.web.enums.Enums;
-import com.jun.weather.util.CLogger;
-import com.jun.weather.util.CommonUtils;
-import com.jun.weather.util.GPSHelper;
-import com.jun.weather.util.GeoLocationHelper;
-import com.jun.weather.util.PreferenceUtils;
-import com.jun.weather.viewmodel.CustomViewModelProvider;
-import com.jun.weather.viewmodel.WeatherPointViewModel;
-import com.jun.weather.viewmodel.entity.FailRestResponse;
-import com.jun.weather.viewmodel.entity.WeatherPointModel;
+import com.jun.weather.ui.entity.FailRestResponse;
 
 import java.util.ArrayList;
 import java.util.List;

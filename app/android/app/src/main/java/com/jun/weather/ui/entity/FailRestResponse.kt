@@ -1,4 +1,4 @@
-package com.jun.weather.viewmodel.entity
+package com.jun.weather.ui.entity
 
 data class FailRestResponse (
         val code: Int = 0,

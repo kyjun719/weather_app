@@ -8,7 +8,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.jun.weather.R;
-import com.jun.weather.viewmodel.entity.Enum;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -85,8 +84,8 @@ public class CommonUtils {
         if(sky == null) {
             return 0;
         }
-        com.jun.weather.viewmodel.entity.Enum.MID_LAND_SKY ret =
-                com.jun.weather.viewmodel.entity.Enum.MID_LAND_SKY.getEnumValByStringVal(sky);
+        Enum.MID_LAND_SKY ret =
+                Enum.MID_LAND_SKY.getEnumValByStringVal(sky);
         if(ret == null) {
             return 0;
         }

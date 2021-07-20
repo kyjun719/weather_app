@@ -3,7 +3,7 @@
     <data>
         <variable
             name="nowWeather"
-            type="com.jun.weather.viewmodel.entity.NowWeatherModel" />
+            type="com.jun.weather.ui.entity.NowWeatherModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -65,7 +65,7 @@ class KakaoLocationRepository(context: Context) {
         query["x"] = "" + lng
         query["y"] = "" + lat
         val call: Call<KakaoRegionCodeRes> = kakaoLocalService.getReverseGeocodeAddress(AUTHORIZATION_KAKAO, query)
-        val urlPath = call.request().url().encodedPath()
+        val urlPath = call.request().url.encodedPath
         if (containsInCache(urlPath, lng, lat)) {
             return map[createCacheKey(urlPath, lng, lat)] as RestResponse<KakaoRegionCodeRes>
         }

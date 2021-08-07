@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/dividerColor"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/view2"/>
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/dividerColor"
+            app:layout_constraintLeft_toRightOf="@id/view1"
+            app:layout_constraintRight_toLeftOf="@id/view3"/>
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/dividerColor"
+            app:layout_constraintLeft_toRightOf="@id/view2"
+            app:layout_constraintRight_toLeftOf="@id/view4" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/dividerColor"
+            app:layout_constraintLeft_toRightOf="@id/view3"
+            app:layout_constraintRight_toLeftOf="@id/view5" />
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/dividerColor"
+            app:layout_constraintLeft_toRightOf="@id/view4"
+            app:layout_constraintRight_toLeftOf="@id/view6" />
+
+        <View
+            android:id="@+id/view6"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/dividerColor"
+            app:layout_constraintLeft_toRightOf="@id/view5"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/view1"
+            />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/view1"
+            app:layout_constraintRight_toLeftOf="@id/view2"
+            />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/view2"
+            app:layout_constraintRight_toLeftOf="@id/view3"
+            />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/view3"
+            app:layout_constraintRight_toLeftOf="@id/view4"
+            />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/view4"
+            app:layout_constraintRight_toLeftOf="@id/view5"
+            />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/view5"
+            app:layout_constraintRight_toLeftOf="@id/view6"
+            />
+
+        <com.jun.weather.ui.component.WeeklyItemView
+            android:id="@+id/weekly_item_7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/view6"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

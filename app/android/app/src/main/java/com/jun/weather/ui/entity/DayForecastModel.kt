@@ -1,6 +1,5 @@
 package com.jun.weather.ui.entity
 
-import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 data class DayForecastModel(var forecastDate: String = "",
@@ -21,10 +20,7 @@ data class DayForecastModel(var forecastDate: String = "",
                             var forecastHighTemp: String? = null,
                             var forecastSkyDrawableId: Int = 0) {
 
-    val dateTime: DateTime
-        get() = DateTimeFormat.forPattern("yyyyMMdd HHmm").parseDateTime("$forecastDate $forecastTime")
-    val hourString: String
-        get() = dateTime.toString("HH시")
-    val dayString: String
-        get() = dateTime.toString("dd일")
+    val dateTime = DateTimeFormat.forPattern("yyyyMMdd HHmm").parseDateTime("$forecastDate $forecastTime")
+    val hourString = dateTime.toString("HH시")
+    val dayString = dateTime.toString("dd일")
 }

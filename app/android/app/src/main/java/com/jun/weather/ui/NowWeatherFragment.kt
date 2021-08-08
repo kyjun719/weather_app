@@ -32,8 +32,8 @@ import java.util.*
 class NowWeatherFragment : Fragment() {
     private lateinit var weatherViewModel: NowWeatherViewModel
     private lateinit var dayForecastViewModel: DayForecastViewModel
-    private lateinit var binding: FragmentDayWeatherBinding
     private lateinit var weatherPointViewModel: WeatherPointViewModel
+    private lateinit var binding: FragmentDayWeatherBinding
     private var pointModel: WeatherPoint? = null
 
     internal enum class SelectedItem {
@@ -44,18 +44,19 @@ class NowWeatherFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_weather, container, false)
 
         val application = requireActivity().application as BaseApplication
-        weatherViewModel = CustomViewModelProvider(application.repository!!)
+        weatherViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel((requireActivity() as AppCompatActivity), NowWeatherViewModel::class.java)
-        dayForecastViewModel = CustomViewModelProvider(application.repository!!)
+        dayForecastViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel((requireActivity() as AppCompatActivity), DayForecastViewModel::class.java)
-        weatherPointViewModel = CustomViewModelProvider(application.repository!!)
+        weatherPointViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel((requireActivity() as AppCompatActivity), WeatherPointViewModel::class.java)
 
-        return binding.getRoot()
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initView()
         initObserver()
         changeGraphData(SelectedItem.TEMP)
@@ -79,10 +80,16 @@ class NowWeatherFragment : Fragment() {
             }
         })
 
-        dayForecastViewModel.data.observe(viewLifecycleOwner, { dayForecastModels: List<DayForecastModel> -> updateDayForecastData(dayForecastModels) })
+        dayForecastViewModel.data.observe(viewLifecycleOwner, { dayForecastModels ->
+            updateDayForecastData(dayForecastModels) }
+        )
 
-        dayForecastViewModel.updateFailData.observe(viewLifecycleOwner, { failRestResponse: FailRestResponse -> dayForecastDateFailProcess(failRestResponse) })
-        weatherViewModel.updateFailData.observe(viewLifecycleOwner, { failRestResponse: FailRestResponse -> nowWeatherDataFailProcess(failRestResponse) })
+        dayForecastViewModel.updateFailData.observe(viewLifecycleOwner, { failRestResponse ->
+            dayForecastDateFailProcess(failRestResponse) }
+        )
+        weatherViewModel.updateFailData.observe(viewLifecycleOwner, { failRestResponse ->
+            nowWeatherDataFailProcess(failRestResponse) }
+        )
 
         weatherViewModel.isLoading.observe(viewLifecycleOwner, { aBoolean ->
             aBoolean?.let {
@@ -103,23 +110,21 @@ class NowWeatherFragment : Fragment() {
 
     private var selectedItem = SelectedItem.EMPTY
     private fun changeGraphData(tag: Any) {
-        if (tag !is SelectedItem) {
-            return
-        }
-        val newSelected = tag
-        if (newSelected == selectedItem) {
+        if (tag !is SelectedItem || tag == selectedItem) {
             return
         }
         when (selectedItem) {
             SelectedItem.RAIN -> binding.btnRain.setImageResource(R.drawable.ic_rain_normal)
             SelectedItem.TEMP -> binding.btnTemp.setImageResource(R.drawable.ic_temperature_normal)
             SelectedItem.HUMIDITY -> binding.btnHumidity.setImageResource(R.drawable.ic_thermometer_normal)
+            SelectedItem.EMPTY -> {}
         }
-        selectedItem = newSelected
+        selectedItem = tag
         when (selectedItem) {
             SelectedItem.RAIN -> binding.btnRain.setImageResource(R.drawable.ic_rain_accent)
             SelectedItem.TEMP -> binding.btnTemp.setImageResource(R.drawable.ic_temperature_accent)
             SelectedItem.HUMIDITY -> binding.btnHumidity.setImageResource(R.drawable.ic_thermometer_accent)
+            SelectedItem.EMPTY -> {}
         }
 
         dayForecastViewModel.data.value?.let {
@@ -162,26 +167,10 @@ class NowWeatherFragment : Fragment() {
     private val rainStrValArr = arrayOf("없음", "1mm미만", "1~4mm", "5~9mm", "10~19mm", "20~39mm", "40~69mm", "70mm 이상")
     private val rainValArr = floatArrayOf(0f, 1f, 4f, 9f, 19f, 39f, 60f, 70f)
     private fun rainStringToValue(str: String): Float {
-        /*
-        for (i in rainStrValArr.indices) {
-            if (rainStrValArr[i] == str) {
-                return rainValArr[i]
-            }
-        }
-        return rainValArr[0]
-         */
         return if(str == "강수없음") return 0f else str.substring(0, str.indexOf("mm")).toFloat()
     }
 
     private fun rainValueToString(value: Float): String {
-        /*
-        for (i in rainValArr.indices) {
-            if (rainValArr[i] == value) {
-                return rainStrValArr[i]
-            }
-        }
-        return rainStrValArr[0]
-         */
         return value.toString()+"mm"
     }
 

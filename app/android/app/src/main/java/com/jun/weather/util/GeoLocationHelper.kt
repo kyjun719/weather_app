@@ -53,7 +53,7 @@ class GeoLocationHelper private constructor() {
         }
         isInitialized = true
         val application = (context as Activity).application as BaseApplication
-        val appRepository = application.repository!!
+        val appRepository = application.repository
         nowLocationViewModel = CustomViewModelProvider(appRepository).getViewModel(
                 (context as AppCompatActivity), NowLocationViewModel::class.java)
         weatherPointViewModel = CustomViewModelProvider(appRepository).getViewModel(

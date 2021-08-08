@@ -17,11 +17,11 @@ class AppRepository private constructor(context: Context, private val defaultDis
 
     companion object {
         private var instance: AppRepository? = null
-        fun getInstance(context: Context): AppRepository? {
+        fun getInstance(context: Context): AppRepository {
             if (instance == null) {
                 instance = AppRepository(context)
             }
-            return instance
+            return instance!!
         }
 
         fun getInstance(context: Context, defaultDispatcher: CoroutineDispatcher): AppRepository? {

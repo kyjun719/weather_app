@@ -14,7 +14,7 @@ import java.io.IOException
 import java.util.*
 
 class WeatherInfoRepository(context: Context) {
-    private var KEY_WEATHER_FORECAST = context.resources.getString(R.string.key_weather)
+    private val KEY_WEATHER_FORECAST = context.resources.getString(R.string.key_weather)
 
     companion object {
         private val map = HashMap<WeatherInfoCacheKey, RestResponse<*>>()
@@ -60,10 +60,10 @@ class WeatherInfoRepository(context: Context) {
 
     private fun <T> parseFailRequest(response: Response<ApiResponse<T>>): RestResponse<T>{
         val restResponse = RestResponse<T>()
-        if (!response.isSuccessful()) {
+        if (!response.isSuccessful) {
             restResponse.code = response.code()
             val body: ResponseBody? = response.errorBody()
-            restResponse.failMsg = if (body == null) "" else body.string()
+            restResponse.failMsg = body?.string() ?: ""
         }
         val body: ApiResponse<T>? = response.body()
         if (body == null) {
@@ -97,8 +97,8 @@ class WeatherInfoRepository(context: Context) {
                 "ny" to ny.toString()
         )
 
-        val call: Call<ApiResponse<ObserveItem>> = shortWeatherInfoService.getUltraSrtNcst(map)
-        var restResponse: RestResponse<ObserveItem> = RestResponse()
+        val call = shortWeatherInfoService.getUltraSrtNcst(map)
+        var restResponse = RestResponse<ObserveItem>()
         try {
             val response: Response<ApiResponse<ObserveItem>> = call.execute()
             if (isRequestSuccess(response)) {
@@ -122,7 +122,7 @@ class WeatherInfoRepository(context: Context) {
         if (containsInCache(key, baseDate, baseTime, nx, ny)) {
             return map[createCacheKey(key, baseDate, baseTime, nx, ny)] as RestResponse<ForecastItem>
         }
-        val shortWeatherInfoService: ShortWeatherInfoService = ApiClient.getClient(Enums.CLIENT_DEST.SHORT_WEATHER).create(ShortWeatherInfoService::class.java)
+        val shortWeatherInfoService = ApiClient.getClient(Enums.CLIENT_DEST.SHORT_WEATHER).create(ShortWeatherInfoService::class.java)
         val map: Map<String, String> = mapOf(
                 "serviceKey" to KEY_WEATHER_FORECAST,
                 "numOfRows" to "200",
@@ -154,12 +154,13 @@ class WeatherInfoRepository(context: Context) {
         return restResponse
     }
 
-    private val MAX_ITEM_CNT = 300
+    private val MAX_ITEM_CNT = 1000
     fun getShortForecast(baseDate: String, baseTime: String, nx: Int, ny: Int): RestResponse<ForecastItem>? {
         if (containsInCache(Enums.KEY.SHORT_FORECAST.ordinal, baseDate, baseTime, nx, ny)) {
             return map[createCacheKey(Enums.KEY.SHORT_FORECAST.ordinal, baseDate, baseTime, nx, ny)] as RestResponse<ForecastItem>?
         }
         val shortWeatherInfoService: ShortWeatherInfoService = ApiClient.getClient(Enums.CLIENT_DEST.SHORT_WEATHER).create(ShortWeatherInfoService::class.java)
+
         val map: Map<String, String> = mapOf(
                 "serviceKey" to KEY_WEATHER_FORECAST,
                 "numOfRows" to MAX_ITEM_CNT.toString(),
@@ -171,8 +172,8 @@ class WeatherInfoRepository(context: Context) {
                 "ny" to ny.toString()
         )
 
-        val call: Call<ApiResponse<ForecastItem>> = shortWeatherInfoService.getVilageFcst(map)
-        var restResponse: RestResponse<ForecastItem> = RestResponse<ForecastItem>()
+        val call = shortWeatherInfoService.getVilageFcst(map)
+        var restResponse = RestResponse<ForecastItem>()
         try {
             val response: Response<ApiResponse<ForecastItem>> = call.execute()
             if (isRequestSuccess(response)) {
@@ -212,7 +213,7 @@ class WeatherInfoRepository(context: Context) {
         try {
             val response: Response<ApiResponse<ForecastItem>> = call.execute()
             if (isRequestSuccess(response)) {
-                val body: ApiResponse<ForecastItem> = response.body() ?: throw Exception()
+                val body = response.body() ?: throw Exception()
                 restResponse.code = response.code()
                 restResponse.listBody = body.response.body.items.item
                 addToCacheMap(Enums.KEY.ULTRA_SHORT_FORECAST.ordinal, baseDate, baseTime, nx, ny, restResponse)

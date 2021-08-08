@@ -81,93 +81,20 @@ class DayForecastViewModel(repository: AppRepository) : BaseViewModel(repository
         return dayForecastModel
     }
 
-    private fun getForecastRainString(value: String): String {
-        /*
-        1mm 미만	1mm 미만
-        1mm 이상 30mm 미만	정수값
-        (1mm~29 mm)
-        30 mm 이상 50 mm 미만	30~50mm
-        50 mm 이상	50mm 이상
-         */
-        if(value == "강수없음") return "0mm"
-
-        val `val` = value.toInt()
-        if (`val` < 1) {
-            return "1mm미만"
-        }
-        if (`val` < 30) {
-            return "1~29mm"
-        }
-        if (`val` < 50) {
-            return "30~50mm"
-        }
-        return "50mm 이상"
-    }
-
-    private fun getForecastSnowString(value: String): String {
-        /*
-        1 cm 미만	1 cm 미만
-        1 cm 이상 5 cm 미만	소수점 한자리 값
-        (1.0 cm~4.9 cm)
-        5 cm 이상	5 cm 이상
-         */
-        if(value == "적설없음") return "없음"
-
-        val `val` = value.toDouble()
-        if (`val` < 0.1) {
-            return "없음"
-        }
-        if (`val` < 1) {
-            return "1cm미만"
-        }
-        if (`val` < 5) {
-            return String.format("%.2f cm",`val`)
-        }
-        return "5cm 이상"
-    }
-
     private fun setSkyIcon(dayForecastModel: DayForecastModel) {
-        val valPty = PtyState.getValByStringVal(dayForecastModel.forecastRainState)
-        val valSky = SkyState.getValByStringVal(dayForecastModel.forecastSky)
-        dayForecastModel.forecastSkyDrawableId = CommonUtils.getSkyIcon(valSky, valPty)
+        dayForecastModel.forecastSkyDrawableId = CommonUtils.getSkyIcon(
+                SkyState.getValByStringVal(dayForecastModel.forecastSky),
+                PtyState.getValByStringVal(dayForecastModel.forecastRainState)
+        )
     }
 
     fun updateShortForecastData(nx: Int, ny: Int) {
-        var dateTime = DateTime.now().toDateTime(DateTimeZone.forID("Asia/Seoul"))
-        val arr = intArrayOf(-1, 2, 5, 8, 11, 14, 17, 20, 23, 26)
-        val nowHour = dateTime.hourOfDay
-        var isOClock = false
-        for (i in 1 until arr.size - 1) {
-            if (nowHour == arr[i] && dateTime.minuteOfHour > 10) {
-                isOClock = true
-                break
-            }
-        }
-        if (!isOClock) {
-            for (i in 1 until arr.size) {
-                if (arr[i - 1] <= nowHour && arr[i] >= nowHour) {
-                    CLogger.d(nowHour.toString() + ">>" + arr[i - 1] + "~" + arr[i])
-                    dateTime = dateTime.minusHours(nowHour - arr[i - 1])
-                    break
-                }
-            }
-        }
-
-        /*
-        String baseDate = ""+dateTime.getYear();
-        baseDate += dateTime.getMonthOfYear()>9?dateTime.getMonthOfYear():"0"+dateTime.getMonthOfYear();
-        baseDate += dateTime.getDayOfMonth()>9?dateTime.getDayOfMonth():"0"+dateTime.getDayOfMonth();
-
-        String baseTime = dateTime.getHourOfDay()>9?""+dateTime.getHourOfDay():"0"+dateTime.getHourOfDay();
-        baseTime += "00";
-         */
-        dateTime = dateTime.minusMinutes(dateTime.minuteOfHour)
-        val baseDate = dateTime.toString("yyyyMMdd")
-        val baseTime = dateTime.toString("HHmm")
-        val baseUltraShortTime = if(dateTime.minuteOfHour < 45) {
-            dateTime.minusHours(1)
+        val baseDate = shortForecastDateTime.toString("yyyyMMdd")
+        val baseTime = shortForecastDateTime.toString("HHmm")
+        val baseUltraShortTime = if(shortForecastDateTime.minuteOfHour < 45) {
+            shortForecastDateTime.minusHours(1)
         } else {
-            dateTime
+            shortForecastDateTime
         }.withMinuteOfHour(30).toString("HHmm")
         CLogger.d("$baseDate,$baseTime")
         viewModelScope.launch {
@@ -177,4 +104,29 @@ class DayForecastViewModel(repository: AppRepository) : BaseViewModel(repository
             )
         }
     }
+
+    private val shortForecastDateTime: DateTime
+        get() {
+            var dateTime = DateTime.now().toDateTime(DateTimeZone.forID("Asia/Seoul"))
+            val arr = intArrayOf(-1, 2, 5, 8, 11, 14, 17, 20, 23, 26)
+            val nowHour = dateTime.hourOfDay
+            var isOClock = false
+            for (i in 1 until arr.size - 1) {
+                if (nowHour == arr[i] && dateTime.minuteOfHour > 10) {
+                    isOClock = true
+                    break
+                }
+            }
+            if (!isOClock) {
+                for (i in 1 until arr.size) {
+                    if (arr[i - 1] <= nowHour && arr[i] >= nowHour) {
+                        CLogger.d(nowHour.toString() + ">>" + arr[i - 1] + "~" + arr[i])
+                        dateTime = dateTime.minusHours(nowHour - arr[i - 1])
+                        break
+                    }
+                }
+            }
+
+            return dateTime.minusMinutes(dateTime.minuteOfHour)
+        }
 }

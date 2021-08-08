@@ -37,13 +37,14 @@ class WeekWeatherFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_week_weather, container, false)
         val application = requireActivity().application as BaseApplication
-        midWeatherViewModel = CustomViewModelProvider(application.repository!!)
+        midWeatherViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel((requireActivity() as AppCompatActivity), MidWeatherViewModel::class.java)
-        weatherViewModel = CustomViewModelProvider(application.repository!!)
+        weatherViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel(this, NowWeatherViewModel::class.java)
-        dayForecastViewModel = CustomViewModelProvider(application.repository!!)
+        dayForecastViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel((requireActivity() as AppCompatActivity), DayForecastViewModel::class.java)
-        weatherPointViewModel = CustomViewModelProvider(application.repository!!).getViewModel((requireActivity() as AppCompatActivity), WeatherPointViewModel::class.java)
+        weatherPointViewModel = CustomViewModelProvider(application.repository)
+                .getViewModel((requireActivity() as AppCompatActivity), WeatherPointViewModel::class.java)
 
         return binding.root
     }

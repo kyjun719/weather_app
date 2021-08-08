@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.os.Build
 import android.text.Html
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -12,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.jun.weather.R
 import com.jun.weather.databinding.ComponentWeeklyItemBinding
+import java.util.*
 
 class WeeklyItemView : ConstraintLayout {
     private lateinit var binding: ComponentWeeklyItemBinding
@@ -74,10 +78,14 @@ class WeeklyItemView : ConstraintLayout {
     }
 
     fun setTemp(low: String, high: String) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            binding.textTemp.text = Html.fromHtml(context.getString(R.string.week_temp, low, high), Html.FROM_HTML_MODE_LEGACY)
-        } else {
-            binding.textTemp.text = Html.fromHtml(context.getString(R.string.week_temp, low, high))
-        }
+        val sp =  SpannableString(String.format(Locale.getDefault(), resources.getString(R.string.week_temp2), low,high))
+        sp.setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(this.context, R.color.colorAccentBlue)),
+                0,sp.indexOf("/"),Spanned.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        sp.setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(this.context, R.color.colorAccentRed)),
+                sp.indexOf("/"),sp.length,Spanned.SPAN_INCLUSIVE_INCLUSIVE
+        )
     }
 }

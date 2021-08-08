@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.jun.weather.repository.AppRepository
 import com.jun.weather.ui.entity.WeatherPoint
 import com.jun.weather.ui.entity.WeatherPointModel
-import com.jun.weather.util.CLogger
 import com.jun.weather.util.PreferenceUtils
 import kotlinx.coroutines.launch
 
@@ -41,28 +40,26 @@ class WeatherPointViewModel(repository: AppRepository) : BaseViewModel(repositor
             var startIdx = -1
             var endIdx = -1
             value.forEachIndexed { index, model ->
-                model?.let {
-                    weatherPointModel.weatherPointList.add(
-                            WeatherPoint(
-                                    model.deg1,
-                                    model.deg2,
-                                    model.deg3,
-                                    model.x,
-                                    model.y,
-                                    model.midTempCode,
-                                    model.midWeatherCode,
-                            )
-                    )
-                    if (befKey == "${model.deg1} ${model.deg2}") {
-                        endIdx++
-                    } else {
-                        if (!befKey.isEmpty()) {
-                            weatherPointModel.indexMap[befKey] = arrayOf(startIdx, endIdx)
-                        }
-                        startIdx = index
-                        endIdx = index
-                        befKey = "${model.deg1} ${model.deg2}"
+                weatherPointModel.weatherPointList.add(
+                        WeatherPoint(
+                                model.deg1,
+                                model.deg2,
+                                model.deg3,
+                                model.x,
+                                model.y,
+                                model.midTempCode,
+                                model.midWeatherCode,
+                        )
+                )
+                if (befKey == "${model.deg1} ${model.deg2}") {
+                    endIdx++
+                } else {
+                    if (!befKey.isEmpty()) {
+                        weatherPointModel.indexMap[befKey] = arrayOf(startIdx, endIdx)
                     }
+                    startIdx = index
+                    endIdx = index
+                    befKey = "${model.deg1} ${model.deg2}"
                 }
             }
             if (startIdx != -1 && startIdx == endIdx) {

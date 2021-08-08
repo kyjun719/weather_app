@@ -27,7 +27,7 @@ class SearchAddressComponent(val activity: AppCompatActivity, val binding: Compo
 
     init {
         val application = activity.application as BaseApplication
-        weatherPointViewModel = CustomViewModelProvider(application.repository!!)
+        weatherPointViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel(activity, WeatherPointViewModel::class.java)
 
         binding.lifecycleOwner = activity

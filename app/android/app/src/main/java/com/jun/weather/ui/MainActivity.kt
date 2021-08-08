@@ -40,8 +40,8 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var weatherPointViewModel: WeatherPointViewModel? = null
-    private var pagerAdapter: PagerAdapter? = null
     private lateinit var mContext: Context
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         val application = application as BaseApplication
-        weatherPointViewModel = CustomViewModelProvider(application.repository!!)
+        weatherPointViewModel = CustomViewModelProvider(application.repository)
                 .getViewModel(this, WeatherPointViewModel::class.java)
 
         GeoLocationHelper.instance!!.init(this, this)
@@ -65,8 +65,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initHelpButton() {
-        binding.btnHelp.setOnClickListener { v: View? ->
-            val intent = Intent(mContext, HelpActivity::class.java)
+        binding.btnHelp.setOnClickListener {
+            val intent = Intent(this, HelpActivity::class.java)
             startActivity(intent)
         }
     }
@@ -74,8 +74,20 @@ class MainActivity : AppCompatActivity() {
     private fun initViewPager2() {
         binding.pager.isUserInputEnabled = false
 
-        pagerAdapter = PagerAdapter(this)
-        binding.pager.adapter = pagerAdapter
+        binding.pager.adapter = object: FragmentStateAdapter(this) {
+            override fun createFragment(position: Int): Fragment {
+                CLogger.d("createFragment::$position")
+                return if (position == 0) {
+                    NowWeatherFragment()
+                } else {
+                    WeekWeatherFragment()
+                }
+            }
+
+            override fun getItemCount(): Int {
+                return 2
+            }
+        }
 
         TabLayoutMediator(findViewById(R.id.layout_tab), binding.pager) { tab: TabLayout.Tab, position: Int ->
             if (position == 0) {
@@ -86,30 +98,15 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 
-    private class PagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
-        override fun createFragment(position: Int): Fragment {
-            CLogger.d("createFragment::$position")
-            return if (position == 0) {
-                NowWeatherFragment()
-            } else {
-                WeekWeatherFragment()
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return 2
-        }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        notifyPermissionRequestResult(mContext, requestCode, grantResults)
+        notifyPermissionRequestResult(this, requestCode, grantResults)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CHECK_GPS_SETTINGS) {
-            GPSHelper.instance!!.checkGPSSettingResult(mContext, resultCode)
+            GPSHelper.instance!!.checkGPSSettingResult(this, resultCode)
         }
     }
 
@@ -131,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
     fun hideKeyboard(v: View) {
         v.clearFocus()
-        val imm = mContext.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(v.windowToken, 0)
     }
 

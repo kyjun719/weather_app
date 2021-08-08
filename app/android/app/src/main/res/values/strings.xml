@@ -15,4 +15,5 @@
     <string name="day_weather_no_data">지역을 선택해주세요.</string>
 
     <string name="week_temp"><![CDATA[<font color="#637DFF">%s</font>/<font color="#FF77A9">%s</font>]]></string>
+    <string name="week_temp2">%s/%s</string>
 </resources>

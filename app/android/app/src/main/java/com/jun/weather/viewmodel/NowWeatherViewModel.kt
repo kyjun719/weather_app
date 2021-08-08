@@ -106,13 +106,8 @@ class NowWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
     }
 
     fun updateNowWeather(nx: Int, ny: Int) {
-        var dateTime = DateTime.now().toDateTime(DateTimeZone.forID("Asia/Seoul"))
-        if (dateTime.minuteOfHour < 40) {
-            dateTime = dateTime.minusHours(1)
-        }
-        dateTime = dateTime.minusMinutes(dateTime.minuteOfHour)
-        val baseDate = dateTime.toString("yyyyMMdd")
-        val baseTime = dateTime.toString("HHmm")
+        val baseDate = nowWeatherDateTime.toString("yyyyMMdd")
+        val baseTime = nowWeatherDateTime.toString("HHmm")
         CLogger.d("$baseDate,$baseTime")
 
         isLoading.postValue(true)
@@ -127,6 +122,15 @@ class NowWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
         }
     }
 
+    private val nowWeatherDateTime: DateTime
+        get() {
+            var dateTime = DateTime.now().toDateTime(DateTimeZone.forID("Asia/Seoul"))
+            if (dateTime.minuteOfHour < 40) {
+                dateTime = dateTime.minusHours(1)
+            }
+            return dateTime.minusMinutes(dateTime.minuteOfHour)
+        }
+
     //최저기온은 금일 02시, 아닐경우 전일23시
     private val lowTempDateTime: DateTime
         get() {
@@ -139,8 +143,7 @@ class NowWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
             } else {
                 dateTime.minusHours(nowHour - 2)
             }
-            dateTime = dateTime.minusMinutes(dateTime.minuteOfHour)
-            return dateTime
+            return dateTime.minusMinutes(dateTime.minuteOfHour)
         }
 
     //최고기온은 금일 11시, 아닐경우 3시간전씩 돌림
@@ -164,8 +167,7 @@ class NowWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
                 }
             }
             CLogger.d("high::$dateTime")
-            dateTime = dateTime.minusMinutes(dateTime.minuteOfHour)
-            return dateTime
+            return dateTime.minusMinutes(dateTime.minuteOfHour)
         }
 
     private val ultraShortForecastDateTime: DateTime

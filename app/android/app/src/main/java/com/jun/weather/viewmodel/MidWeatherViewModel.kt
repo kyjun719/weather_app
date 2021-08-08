@@ -11,7 +11,6 @@ import com.jun.weather.repository.web.entity.RestResponse
 import com.jun.weather.repository.web.enums.Enums
 import com.jun.weather.ui.entity.FailRestResponse
 import com.jun.weather.ui.entity.MidForecastModel
-import com.jun.weather.util.CLogger
 import com.jun.weather.util.CommonUtils
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -37,9 +36,6 @@ class MidWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
                     FailRestResponse(Enums.ResponseCode.EXCEPTION_ERROR.value, "data is empty")
             )
         } else {
-            if (baseDate == null) {
-                setBaseDate()
-            }
             val sparseArray = SparseArray<MidForecastModel>()
             parseData(sparseArray, data1, data2)
             _data.postValue(sparseArray)
@@ -160,10 +156,10 @@ class MidWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
     }
 
     private var isYesterdayBase = false
-    private var baseDate: String? = null
+    private lateinit var baseDate: String
     fun updateMidWeather(landRegionId: String?, tempRegionId: String?) {
-        setBaseDate()
         viewModelScope.launch {
+            baseDate = midWeatherBaseDate.toString("yyyyMMddHHmm")
             updateMidForecastModel(
                     repository.getMidLandData(baseDate, landRegionId),
                     repository.getMidTempData(baseDate, tempRegionId)
@@ -171,24 +167,23 @@ class MidWeatherViewModel(repository: AppRepository) : BaseViewModel(repository)
         }
     }
 
-    private fun setBaseDate() {
-        //중기예보는 6시, 18시에 업데이트됨
-        //단기예보는 17시10이후부터 +3일까지 데이터 제공. 이전은 +2일까지 제공
-        //중기는 6시의 경우 +3, 18시의 경우 +4 ~ 10일
-        var dateTime = DateTime.now().toDateTime(DateTimeZone.forID("Asia/Seoul"))
-        if (dateTime.hourOfDay < 6) {
-            //전날 18시 예보 요청
-            dateTime = dateTime.minusDays(1).withHourOfDay(18)
-            isYesterdayBase = true
-        } else if (dateTime.hourOfDay < 18) {
-            //당일 6시 예보 요청
-            dateTime = dateTime.withHourOfDay(6)
-        } else {
-            //당일 18시 예보 요청
-            dateTime = dateTime.withHourOfDay(18)
+    private val midWeatherBaseDate: DateTime
+        get() {
+            //중기예보는 6시, 18시에 업데이트됨
+            //단기예보는 17시10이후부터 +3일까지 데이터 제공. 이전은 +2일까지 제공
+            //중기는 6시의 경우 +3, 18시의 경우 +4 ~ 10일
+            var dateTime = DateTime.now().toDateTime(DateTimeZone.forID("Asia/Seoul"))
+            if (dateTime.hourOfDay < 6) {
+                //전날 18시 예보 요청
+                dateTime = dateTime.minusDays(1).withHourOfDay(18)
+                isYesterdayBase = true
+            } else if (dateTime.hourOfDay < 18) {
+                //당일 6시 예보 요청
+                dateTime = dateTime.withHourOfDay(6)
+            } else {
+                //당일 18시 예보 요청
+                dateTime = dateTime.withHourOfDay(18)
+            }
+            return dateTime.withMinuteOfHour(0)
         }
-        dateTime = dateTime.withMinuteOfHour(0)
-        baseDate = dateTime.toString("yyyyMMddHHmm")
-        CLogger.d(baseDate!!)
-    }
 }

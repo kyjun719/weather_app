@@ -16,8 +16,7 @@ class BaseApplication : Application() {
         getInstance().init(baseContext)
     }
 
-    val repository: AppRepository?
-        get() = getInstance(baseContext)
+    val repository = getInstance(baseContext)
 
     private fun setDebug() {
         val pm = baseContext.packageManager

@@ -16,8 +16,7 @@ import java.io.IOException
 import java.util.*
 
 class KakaoLocationRepository(context: Context) {
-
-    private var AUTHORIZATION_KAKAO: String = context.resources.getString(R.string.key_kakao_auth)
+    private val AUTHORIZATION_KAKAO: String = context.resources.getString(R.string.key_kakao_auth)
 
     companion object{
         val map: HashMap<KakaoLocationInfoCacheKey, RestResponse<*>> = HashMap<KakaoLocationInfoCacheKey, RestResponse<*>>()
@@ -49,7 +48,7 @@ class KakaoLocationRepository(context: Context) {
         if (!response.isSuccessful) {
             restResponse.code = response.code()
             val body: ResponseBody? = response.errorBody()
-            restResponse.failMsg = if (body == null) "" else body.string()
+            restResponse.failMsg = body?.string() ?: ""
         }
         val body = response.body()
         if (body == null) {

@@ -1,0 +1,58 @@
+[versions]
+kotlin = "1.8.10"
+androidGradle = "8.1.1"
+room = "2.3.0"
+coroutine = "1.4.1"
+retrofit2 = "2.9.0"
+okhttp = "4.9.1"
+glide = "4.11.0"
+
+[plugins]
+
+
+[libraries]
+android-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
+
+kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.3.0" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.0.4" }
+androidx-vierpager2 = { module = "androidx.viewpager2:viewpager2", version = "1.0.0" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.3.1" }
+
+material = { group = "com.google.android.material", name = "material", version = "1.4.0" }
+
+junit = { module = "junit:junit", version = "4.13.1" }
+junit-ext = { module = "androidx.test.ext:junit", version = "1.1.3" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version = "3.4.0" }
+
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-complier = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutine" }
+
+retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }
+retrofit2-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2" }
+gson = { module = "com.google.code.gson:gson", version = "2.8.6" }
+
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging-intercepter = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+
+jodatime = { module = "joda-time:joda-time", version = "2.10.4" }
+
+opencsv = { module = "com.opencsv:opencsv", version = "3.9" }
+
+mpchart = { module = "com.github.PhilJay:MPAndroidChart", version = "v3.1.0" }
+
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+
+google-services-location = { group = "com.google.android.gms", name = "play-services-location", version = "18.0.0" }
+
+[bundles]
+kotlin = ["kotlin-stdlib", "kotlin-reflect"]
+androidx = ["androidx-appcompat", "androidx-constraintlayout", "androidx-vierpager2", "androidx-lifecycle-viewmodel-ktx"]
+retrofit2 = ["retrofit2", "retrofit2-gson", "gson"]
+okhttp = ["okhttp", "okhttp-logging-intercepter"]

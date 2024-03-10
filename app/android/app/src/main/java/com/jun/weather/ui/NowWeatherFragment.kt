@@ -207,6 +207,7 @@ class NowWeatherFragment : Fragment() {
                             tmp.add(BarEntry(i.toFloat(), befRainVal))
                         }
                     }
+                    else -> {}
                 }
                 values.add(entry)
             }

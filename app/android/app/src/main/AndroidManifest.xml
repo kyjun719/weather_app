@@ -13,8 +13,11 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/CustomNoActionBar">
-        <activity android:name=".ui.MainActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+        <activity
+            android:name=".ui.MainActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

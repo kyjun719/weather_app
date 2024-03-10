@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdk 34
+    buildToolsVersion = "34.0.0"
     namespace "com.jun.weather"
 
     defaultConfig {
         applicationId "com.jun.weather"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 34
         versionCode 8
         versionName "1.0"
 
@@ -31,6 +31,9 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+    buildFeatures {
+        dataBinding true
+    }
 }
 
 repositories {
@@ -40,44 +43,40 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.room:room-runtime:2.3.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    testImplementation 'junit:junit:4.13.1'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation libs.bundles.androidx
 
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.21'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.21'
+    implementation libs.material
 
-    annotationProcessor 'androidx.room:room-compiler:2.3.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    testImplementation libs.junit
+    androidTestImplementation libs.junit.ext
+    androidTestImplementation libs.espresso.core
+
+    implementation libs.bundles.kotlin
+
+    implementation libs.room.runtime
+    kapt libs.room.complier
+
+    implementation libs.coroutine
 
     //retrofit2
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation libs.bundles.retrofit2
 
     //okhttp3 and logging interceptor
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation libs.bundles.okhttp
 
     //joda time
-    implementation 'joda-time:joda-time:2.10.4'
+    implementation libs.jodatime
 
     //load csv
-    implementation 'com.opencsv:opencsv:3.9'
+    implementation libs.opencsv
 
     //mpchart
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation libs.mpchart
 
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation libs.glide
+    kapt libs.glide.compiler
 
     //google sdk
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation libs.google.services.location
 }

@@ -2,7 +2,6 @@ package com.jun.weather.repository
 
 import android.content.Context
 import com.jun.weather.repository.db.FileRepository
-import com.jun.weather.repository.db.RoomRepository
 import com.jun.weather.repository.web.KakaoLocationRepository
 import com.jun.weather.repository.web.WeatherInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,7 +11,6 @@ import kotlinx.coroutines.withContext
 class AppRepository private constructor(context: Context, private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO) {
     private val weatherInfoRepository = WeatherInfoRepository(context)
     private val kakaoLocationRepository = KakaoLocationRepository(context)
-    private val roomRepository: RoomRepository? = null
     private val fileRepository: FileRepository = FileRepository()
 
     companion object {

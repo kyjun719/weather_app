@@ -4,6 +4,9 @@ import android.content.res.Resources
 import com.jun.weather.R
 import com.jun.weather.util.CLogger
 import com.opencsv.CSVReader
+import dagger.Reusable
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*

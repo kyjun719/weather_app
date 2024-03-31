@@ -10,10 +10,12 @@ import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -34,13 +36,23 @@ import com.jun.weather.util.GeoLocationHelper.GeoLocationResultListener
 import com.jun.weather.util.GeoLocationHelper.InitPointListener
 import com.jun.weather.util.PreferenceUtils.Companion.getInstance
 import com.jun.weather.viewmodel.CustomViewModelProvider
+import com.jun.weather.viewmodel.DayForecastViewModel
+import com.jun.weather.viewmodel.NowWeatherViewModel
 import com.jun.weather.viewmodel.WeatherPointViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var weatherPointViewModel: WeatherPointViewModel? = null
     private lateinit var mContext: Context
+
+    private val weatherPointViewModel: WeatherPointViewModel by viewModels()
+    private val weatherViewModel: NowWeatherViewModel by viewModels()
+    private val dayForecastViewModel: DayForecastViewModel by viewModels()
+
+    @Inject lateinit var geoLocationHelper: GeoLocationHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val application = application as BaseApplication
-        weatherPointViewModel = CustomViewModelProvider(application.repository)
-                .getViewModel(this, WeatherPointViewModel::class.java)
-
-        GeoLocationHelper.instance!!.init(this, this)
+        geoLocationHelper.init(this, this)
         initView()
     }
 
@@ -61,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         initViewPager2()
         initHelpButton()
 
-        SearchAddressComponent(this, binding.layoutSearchAddress)
+        SearchAddressComponent(this, binding.layoutSearchAddress, weatherPointViewModel, geoLocationHelper)
     }
 
     private fun initHelpButton() {

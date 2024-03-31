@@ -6,6 +6,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import com.jun.weather.BaseApplication
+import com.jun.weather.repository.AppRepository
 import com.jun.weather.repository.web.enums.Enums.ResponseCode
 import com.jun.weather.ui.entity.FailRestResponse
 import com.jun.weather.ui.entity.NowLocation
@@ -15,9 +16,14 @@ import com.jun.weather.util.GPSHelper.LocationResultListener
 import com.jun.weather.viewmodel.CustomViewModelProvider
 import com.jun.weather.viewmodel.NowLocationViewModel
 import com.jun.weather.viewmodel.WeatherPointViewModel
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import java.util.*
+import javax.inject.Inject
 
-class GeoLocationHelper private constructor() {
+class GeoLocationHelper @Inject constructor(
+    private val appRepository: AppRepository
+) {
     interface GeoLocationResultListener {
         fun onSuccess(locationPoint: WeatherPoint)
         fun onFail(failRestResponse: FailRestResponse)
@@ -53,7 +59,7 @@ class GeoLocationHelper private constructor() {
         }
         isInitialized = true
         val application = (context as Activity).application as BaseApplication
-        val appRepository = application.repository
+//        val appRepository = application.repository
         nowLocationViewModel = CustomViewModelProvider(appRepository).getViewModel(
                 (context as AppCompatActivity), NowLocationViewModel::class.java)
         weatherPointViewModel = CustomViewModelProvider(appRepository).getViewModel(
@@ -146,13 +152,13 @@ class GeoLocationHelper private constructor() {
     }
 
     companion object {
-        var instance: GeoLocationHelper? = null
-            get() {
-                if (field == null) {
-                    field = GeoLocationHelper()
-                }
-                return field
-            }
-            private set
+//        var instance: GeoLocationHelper? = null
+//            get() {
+//                if (field == null) {
+//                    field = GeoLocationHelper()
+//                }
+//                return field
+//            }
+//            private set
     }
 }

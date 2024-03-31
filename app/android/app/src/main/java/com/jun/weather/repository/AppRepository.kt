@@ -4,30 +4,37 @@ import android.content.Context
 import com.jun.weather.repository.db.FileRepository
 import com.jun.weather.repository.web.KakaoLocationRepository
 import com.jun.weather.repository.web.WeatherInfoRepository
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class AppRepository private constructor(context: Context, private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO) {
+class AppRepository @Inject constructor(
+    @ApplicationContext context: Context,
+) {
     private val weatherInfoRepository = WeatherInfoRepository(context)
     private val kakaoLocationRepository = KakaoLocationRepository(context)
     private val fileRepository: FileRepository = FileRepository()
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     companion object {
         private var instance: AppRepository? = null
-        fun getInstance(context: Context): AppRepository {
-            if (instance == null) {
-                instance = AppRepository(context)
-            }
-            return instance!!
-        }
+//        fun getInstance(context: Context): AppRepository {
+//            if (instance == null) {
+//                instance = AppRepository(context)
+//            }
+//            return instance!!
+//        }
 
-        fun getInstance(context: Context, defaultDispatcher: CoroutineDispatcher): AppRepository? {
-            if (instance == null) {
-                instance = AppRepository(context, defaultDispatcher)
-            }
-            return instance
-        }
+//        fun getInstance(context: Context, defaultDispatcher: CoroutineDispatcher): AppRepository? {
+//            if (instance == null) {
+//                instance = AppRepository(context, defaultDispatcher)
+//            }
+//            return instance
+//        }
     }
 
     suspend fun getNowWeather(baseDate: String?, baseTime: String?, nx: Int, ny: Int) =

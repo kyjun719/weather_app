@@ -8,9 +8,14 @@ import com.jun.weather.repository.AppRepository
 import com.jun.weather.ui.entity.WeatherPoint
 import com.jun.weather.ui.entity.WeatherPointModel
 import com.jun.weather.util.PreferenceUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WeatherPointViewModel(repository: AppRepository) : BaseViewModel(repository) {
+@HiltViewModel
+class WeatherPointViewModel @Inject constructor(
+    repository: AppRepository
+) : BaseViewModel(repository) {
     private val _data = MutableLiveData<WeatherPointModel>()
     val data: LiveData<WeatherPointModel> = _data
 

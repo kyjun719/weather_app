@@ -9,11 +9,16 @@ import com.jun.weather.repository.web.entity.KakaoLocationInfoCacheKey
 import com.jun.weather.repository.web.entity.KakaoRegionCodeRes
 import com.jun.weather.repository.web.entity.RestResponse
 import com.jun.weather.repository.web.enums.Enums
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 
 class KakaoLocationRepository(context: Context) {
     private val AUTHORIZATION_KAKAO: String = context.resources.getString(R.string.key_kakao_auth)

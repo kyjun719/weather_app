@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.jun.weather.BaseApplication
 import com.jun.weather.R
 import com.jun.weather.databinding.FragmentWeekWeatherBinding
@@ -21,30 +23,23 @@ import com.jun.weather.util.CLogger
 import com.jun.weather.util.CLogger.Companion.d
 import com.jun.weather.util.CommonUtils.getDateString
 import com.jun.weather.viewmodel.*
+import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.DateTimeZone
 
+@AndroidEntryPoint
 class WeekWeatherFragment : Fragment() {
     private lateinit var mActivity: Activity
-    private lateinit var midWeatherViewModel: MidWeatherViewModel
-    private lateinit var weatherViewModel: NowWeatherViewModel
-    private lateinit var dayForecastViewModel: DayForecastViewModel
-    private lateinit var weatherPointViewModel: WeatherPointViewModel
+    private val midWeatherViewModel: MidWeatherViewModel by viewModels()
+    private val weatherViewModel: NowWeatherViewModel by activityViewModels()
+    private val dayForecastViewModel: DayForecastViewModel by activityViewModels()
+    private val weatherPointViewModel: WeatherPointViewModel by activityViewModels()
 
     private lateinit var binding: FragmentWeekWeatherBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_week_weather, container, false)
-        val application = requireActivity().application as BaseApplication
-        midWeatherViewModel = CustomViewModelProvider(application.repository)
-                .getViewModel((requireActivity() as AppCompatActivity), MidWeatherViewModel::class.java)
-        weatherViewModel = CustomViewModelProvider(application.repository)
-                .getViewModel(this, NowWeatherViewModel::class.java)
-        dayForecastViewModel = CustomViewModelProvider(application.repository)
-                .getViewModel((requireActivity() as AppCompatActivity), DayForecastViewModel::class.java)
-        weatherPointViewModel = CustomViewModelProvider(application.repository)
-                .getViewModel((requireActivity() as AppCompatActivity), WeatherPointViewModel::class.java)
 
         return binding.root
     }

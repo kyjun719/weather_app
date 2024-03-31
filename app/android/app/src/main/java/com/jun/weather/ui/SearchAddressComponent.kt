@@ -21,15 +21,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
 
-class SearchAddressComponent(val activity: AppCompatActivity, val binding: ComponentSearchAddressBinding) {
-    private var weatherPointViewModel: WeatherPointViewModel
+class SearchAddressComponent(
+    val activity: AppCompatActivity,
+    val binding: ComponentSearchAddressBinding,
+    private val weatherPointViewModel: WeatherPointViewModel,
+    private val geoLocationHelper: GeoLocationHelper
+) {
     private lateinit var adapter: ArrayAdapter<WeatherPoint>
 
     init {
-        val application = activity.application as BaseApplication
-        weatherPointViewModel = CustomViewModelProvider(application.repository)
-                .getViewModel(activity, WeatherPointViewModel::class.java)
-
         binding.lifecycleOwner = activity
         binding.viewModel = weatherPointViewModel
 
@@ -70,7 +70,7 @@ class SearchAddressComponent(val activity: AppCompatActivity, val binding: Compo
         }
 
         binding.btnGps.setOnClickListener { v: View? ->
-            GeoLocationHelper.instance!!.getNowLocation(activity, object : GeoLocationHelper.GeoLocationResultListener {
+            geoLocationHelper.getNowLocation(activity, object : GeoLocationHelper.GeoLocationResultListener {
                 override fun onSuccess(locationPoint: WeatherPoint) {
                     CLogger.d("find Point::$locationPoint")
                     updateWeatherFromPoint(locationPoint)
@@ -117,7 +117,7 @@ class SearchAddressComponent(val activity: AppCompatActivity, val binding: Compo
         if (PreferenceUtils.getInstance().pointList.isNotEmpty()) {
             updateWeatherFromPoint(PreferenceUtils.getInstance().pointList[0])
         } else {
-            GeoLocationHelper.instance!!.registerInitPointListener(object : GeoLocationHelper.InitPointListener {
+            geoLocationHelper.registerInitPointListener(object : GeoLocationHelper.InitPointListener {
                 override fun onFinish(point: WeatherPoint?) {
                     point?.let { updateWeatherFromPoint(it) }
                 }

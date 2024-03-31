@@ -9,9 +9,14 @@ import com.jun.weather.repository.web.entity.RestResponse
 import com.jun.weather.repository.web.enums.Enums
 import com.jun.weather.ui.entity.FailRestResponse
 import com.jun.weather.ui.entity.NowLocation
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NowLocationViewModel(repository: AppRepository) : BaseViewModel(repository) {
+@HiltViewModel
+class NowLocationViewModel @Inject constructor(
+    repository: AppRepository
+) : BaseViewModel(repository) {
     private val _data = MutableLiveData<List<NowLocation>>()
     val data: LiveData<List<NowLocation>> = _data
 

@@ -7,11 +7,15 @@ import com.jun.weather.repository.web.api.MidWeatherInfoService
 import com.jun.weather.repository.web.api.ShortWeatherInfoService
 import com.jun.weather.repository.web.entity.*
 import com.jun.weather.repository.web.enums.Enums
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 
 class WeatherInfoRepository(context: Context) {
     private val KEY_WEATHER_FORECAST = context.resources.getString(R.string.key_weather)

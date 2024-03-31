@@ -12,12 +12,17 @@ import com.jun.weather.ui.entity.FailRestResponse
 import com.jun.weather.ui.enums.*
 import com.jun.weather.util.CLogger
 import com.jun.weather.util.CommonUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.util.*
+import javax.inject.Inject
 
-class DayForecastViewModel(repository: AppRepository) : BaseViewModel(repository) {
+@HiltViewModel
+class DayForecastViewModel @Inject constructor(
+    repository: AppRepository
+) : BaseViewModel(repository) {
     private val _data = MutableLiveData<List<DayForecastModel>>()
     val data: LiveData<List<DayForecastModel>> = _data
 

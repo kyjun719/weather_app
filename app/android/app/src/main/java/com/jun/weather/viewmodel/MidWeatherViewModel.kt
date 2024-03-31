@@ -12,12 +12,17 @@ import com.jun.weather.repository.web.enums.Enums
 import com.jun.weather.ui.entity.FailRestResponse
 import com.jun.weather.ui.entity.MidForecastModel
 import com.jun.weather.util.CommonUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import javax.inject.Inject
 import kotlin.reflect.full.memberProperties
 
-class MidWeatherViewModel(repository: AppRepository) : BaseViewModel(repository) {
+@HiltViewModel
+class MidWeatherViewModel @Inject constructor(
+    repository: AppRepository
+) : BaseViewModel(repository) {
     private val _data = MutableLiveData<SparseArray<MidForecastModel>>()
     val data: LiveData<SparseArray<MidForecastModel>> = _data
 

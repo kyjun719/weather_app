@@ -13,11 +13,16 @@ import com.jun.weather.ui.entity.NowWeatherModel
 import com.jun.weather.ui.enums.*
 import com.jun.weather.util.CLogger
 import com.jun.weather.util.CommonUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import javax.inject.Inject
 
-class NowWeatherViewModel(repository: AppRepository) : BaseViewModel(repository) {
+@HiltViewModel
+class NowWeatherViewModel @Inject constructor(
+    repository: AppRepository
+) : BaseViewModel(repository) {
     private val _data = MutableLiveData<NowWeatherModel>()
     val data: LiveData<NowWeatherModel> = _data
 

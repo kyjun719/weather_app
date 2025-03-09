@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.8.10"
-androidGradle = "8.1.1"
+androidGradle = "8.3.1"
 room = "2.3.0"
 coroutine = "1.4.1"
 retrofit2 = "2.9.0"
@@ -9,12 +9,13 @@ glide = "4.11.0"
 hilt = "2.44"
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradle" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 
 [libraries]
-android-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
-
-kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
 
@@ -47,14 +48,13 @@ jodatime = { module = "joda-time:joda-time", version = "2.10.4" }
 
 opencsv = { module = "com.opencsv:opencsv", version = "3.9" }
 
-mpchart = { module = "com.github.PhilJay:MPAndroidChart", version = "v3.1.0" }
+mpchart = { module = "com.github.PhilJay:MPAndroidChart", version = "v2.1.5" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 
 google-services-location = { group = "com.google.android.gms", name = "play-services-location", version = "18.0.0" }
 
-hilt-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-complier = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 

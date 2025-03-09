@@ -5,32 +5,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.ChartData
+import com.github.mikephil.charting.data.CombinedData
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.jun.weather.BaseApplication
+import com.github.mikephil.charting.formatter.XAxisValueFormatter
+import com.github.mikephil.charting.utils.ViewPortHandler
 import com.jun.weather.R
 import com.jun.weather.databinding.FragmentDayWeatherBinding
 import com.jun.weather.ui.entity.DayForecastModel
 import com.jun.weather.ui.entity.FailRestResponse
-import com.jun.weather.ui.entity.NowWeatherModel
 import com.jun.weather.ui.entity.WeatherPoint
 import com.jun.weather.util.CLogger
-import com.jun.weather.viewmodel.CustomViewModelProvider
 import com.jun.weather.viewmodel.DayForecastViewModel
 import com.jun.weather.viewmodel.NowWeatherViewModel
 import com.jun.weather.viewmodel.WeatherPointViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.reflect.Field
-import java.util.*
+import java.util.Locale
 
 @AndroidEntryPoint
 class NowWeatherFragment : Fragment() {
@@ -189,24 +190,24 @@ class NowWeatherFragment : Fragment() {
                 }
                 CLogger.d(dayForecastModel.toString())
 
-                val entry = Entry()
-                entry.x = i.toFloat()
                 when (selectedItem) {
-                    SelectedItem.TEMP -> entry.y = dayForecastModel.forecastTemp?.toFloat() ?: 0f
-                    SelectedItem.HUMIDITY -> entry.y = dayForecastModel.forecastHumidity?.toFloat() ?: 0f
+                    SelectedItem.TEMP -> dayForecastModel.forecastTemp?.toFloat() ?: 0f
+                    SelectedItem.HUMIDITY -> dayForecastModel.forecastHumidity?.toFloat() ?: 0f
                     SelectedItem.RAIN -> {
-                        entry.y = dayForecastModel.forecastRainPercentage?.toFloat() ?: 0f
                         if (dayForecastModel.forecastRain != null) {
                             val tmpVal = rainStringToValue(dayForecastModel.forecastRain!!)
-                            tmp.add(BarEntry(i.toFloat(), tmpVal))
+                            tmp.add(BarEntry(tmpVal, i))
                             befRainVal = tmpVal
                         } else {
-                            tmp.add(BarEntry(i.toFloat(), befRainVal))
+                            tmp.add(BarEntry(befRainVal, i))
                         }
+
+                        dayForecastModel.forecastRainPercentage?.toFloat() ?: 0f
                     }
-                    else -> {}
+                    else -> null
+                }?.let { entryValue ->
+                    values.add(Entry(entryValue, i))
                 }
-                values.add(entry)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -214,13 +215,18 @@ class NowWeatherFragment : Fragment() {
         CLogger.d(values)
         val set1 = LineDataSet(values, "DataSet 1")
         set1.lineWidth = 2f
-        val dataSets = ArrayList<ILineDataSet>()
-        dataSets.add(set1)
+
         // add the data sets
         // create a data object with the data sets
-        val lineData = LineData(dataSets)
-        lineData.setValueFormatter(object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
+        val lineData = LineData()
+        lineData.addDataSet(set1)
+        lineData.setValueFormatter(object : ValueFormatter {
+            override fun getFormattedValue(
+                value: Float,
+                entry: Entry?,
+                dataSetIndex: Int,
+                viewPortHandler: ViewPortHandler?
+            ): String {
                 var `val` = String.format(Locale.getDefault(), "%.0f", value)
                 `val` += if (selectedItem == SelectedItem.TEMP) {
                     "\u2103"
@@ -231,31 +237,43 @@ class NowWeatherFragment : Fragment() {
             }
         })
         lineData.setValueTextSize(18f)
+        CLogger.e("${lineData.xVals.size}, ${lineData.yValCount}")
+
         val combinedChart = binding.lineChart
         combinedChart.clear()
         combinedChart.data = null
-        val combinedData = CombinedData()
+        val combinedData = CombinedData(ChartData.generateXVals(0, lineData.yValCount))
         combinedData.setData(lineData)
+
+
         if (selectedItem == SelectedItem.RAIN) {
             val barDataSet = BarDataSet(tmp, "bar")
             barDataSet.color = Color.GRAY
             barDataSet.valueTextSize = 10f
-            barDataSet.valueFormatter = object : ValueFormatter() {
-                override fun getFormattedValue(value: Float): String {
+            barDataSet.valueFormatter = object : ValueFormatter {
+                override fun getFormattedValue(
+                    value: Float,
+                    entry: Entry?,
+                    dataSetIndex: Int,
+                    viewPortHandler: ViewPortHandler?
+                ): String {
                     val tmp = rainValueToString(value)
                     return if (tmp == rainStrValArr[0]) "" else tmp
                 }
             }
-            combinedData.setData(BarData(barDataSet))
+            combinedData.setData(BarData().apply { addDataSet(barDataSet) })
         }
         combinedChart.data = combinedData
-        combinedChart.xAxis.isGranularityEnabled = true
-        combinedChart.xAxis.granularity = 1f
+
         combinedChart.xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
         combinedChart.xAxis.textSize = 18f
-        combinedChart.xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getAxisLabel(value: Float, axisBase: AxisBase): String {
-                return dateList[value.toInt()]
+        combinedChart.xAxis.valueFormatter = object : XAxisValueFormatter {
+            override fun getXValue(
+                original: String?,
+                index: Int,
+                viewPortHandler: ViewPortHandler?
+            ): String {
+                return dateList[index]
             }
         }
 
@@ -273,7 +291,6 @@ class NowWeatherFragment : Fragment() {
         combinedChart.axisRight.setDrawGridLines(false)
         combinedChart.axisRight.setDrawLabels(false)
         combinedChart.legend.isEnabled = false
-        combinedChart.description = null
         combinedChart.isDoubleTapToZoomEnabled = false
         combinedChart.setVisibleXRangeMaximum(5f)
         combinedChart.invalidate()

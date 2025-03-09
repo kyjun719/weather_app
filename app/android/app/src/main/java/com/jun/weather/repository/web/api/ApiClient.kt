@@ -21,8 +21,8 @@ object ApiClient {
         val httpClientBuilder = OkHttpClient.Builder()
         if (BaseApplication.isDebug) {
             val interceptor = HttpLoggingInterceptor()
-            //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-            interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            //interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
             httpClientBuilder.addInterceptor(interceptor)
         }
         val client = httpClientBuilder.build()
